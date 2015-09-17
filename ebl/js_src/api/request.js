@@ -10,6 +10,7 @@ var ApiResult = {
     
     EBL_ERROR_BADREQUEST :          400,
     EBL_ERROR_AUTH_NOTLOGGED :      401,
+    EBL_ERROR_NOTFOUND :            404,
     EBL_ERROR_AUTH_SHORTACCESS :    429,
     EBL_ERROR_AUTH_NOADMIN :        450,
     EBL_ERROR_AUTH_ALREADYADMIN :   451,
@@ -18,8 +19,7 @@ var ApiResult = {
     EBL_ERROR_INTERNAL :            500,
     EBL_ERROR_DB_ACCESS :           550,
     EBL_ERROR_DB_INSERT :           551,
-    EBL_ERROR_DB_SELECT :           552,
-    EBL_ERROR_DB_UPDATE :           553
+    EBL_ERROR_DB_UPDATE :           552
 };
 
 /**

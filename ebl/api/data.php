@@ -196,7 +196,7 @@ class DataApi extends EblApi {
         
         $docs = $query->execute();
         if (count($docs) == 0) {
-            throw new DatabaseException("can't find post with ID '". $postId ."'", self::EBL_ERROR_DB_SELECT);
+            throw new DatabaseException("can't find post with ID '". $postId ."'", self::EBL_ERROR_NOTFOUND);
         }
         
         return $this->createPostFromDoc($docs[0]);
@@ -291,7 +291,7 @@ class DataApi extends EblApi {
             ->execute();
         
         if ($res->count() == 0) {
-            throw new DatabaseException("update failed: can't find document ". $postId, self::EBL_ERROR_DB_UPDATE);
+            throw new DatabaseException("update failed: can't find document ". $postId, self::EBL_ERROR_NOTFOUND);
         }
         
         $doc = $res->first();

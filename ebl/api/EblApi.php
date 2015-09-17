@@ -28,6 +28,7 @@ abstract class EblApi {
     // 4xx codes
     const EBL_ERROR_BADREQUEST =            400;
     const EBL_ERROR_AUTH_NOTLOGGED =        401;
+    const EBL_ERROR_NOTFOUND =              404;
     const EBL_ERROR_AUTH_SHORTACCESS =      429;
     const EBL_ERROR_AUTH_NOADMIN =          450;
     const EBL_ERROR_AUTH_ALREADYADMIN =     451;
@@ -37,8 +38,7 @@ abstract class EblApi {
     const EBL_ERROR_INTERNAL =              500;
     const EBL_ERROR_DB_ACCESS =             550;
     const EBL_ERROR_DB_INSERT =             551;
-    const EBL_ERROR_DB_SELECT =             552;
-    const EBL_ERROR_DB_UPDATE =             553;
+    const EBL_ERROR_DB_UPDATE =             552;
     
     const DATE_FORMAT_ISO8601 = "Y-m-d\TH:i:s";
     
