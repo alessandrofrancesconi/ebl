@@ -3,8 +3,6 @@
 require ("EblApi.php");
 require ("../libs/Smarty/Smarty.class.php");
 
-header('Content-Type: text/html; charset=utf-8');
-
 class RenderApi extends EblApi {
     
     const TEMPLATE_CACHE_FOLDER = "_cache";
@@ -236,6 +234,7 @@ class RenderApi extends EblApi {
     }
 }
 
+header('Content-Type: text/html; charset=utf-8');
 if (($getRequest = isset($_GET['action'])) || ($postRequest = isset($_POST['action']))) {
     $api = new RenderApi();
     $api->processAction($getRequest ? $_GET : $_POST);
