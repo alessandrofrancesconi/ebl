@@ -1,0 +1,270 @@
+
+/**
+ * Ebl: the embeddable blogging engine
+ * https://github.com/alessandrofrancesconi/ebl
+ *
+ * Author: Alessandro Francesconi (http://www.alessandrofrancesconi.it/)
+ *
+ * Copyright (C) 2015 Alessandro Francesconi
+ * Licensed under the GPL-3.0 license
+ * 
+ * This CSS file is used for core functionalities, you should NOT edit it.
+ */
+
+.ebl-button {
+	color: inherit;
+	border: 0px;
+	padding: 0px;
+	background: none;
+	font: inherit;
+	cursor: pointer;
+}
+
+.ebl-button:disabled{
+	opacity: 0.5;
+}
+
+.ebl-unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+
+pre.ebl-pre {
+    font-size: 0.9em;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+}
+
+/* admin bar */
+
+.ebl-adminbar {
+	position: relative;
+	width: 100%;
+    margin-bottom: 10px;
+	text-align: center;
+    background-color: #3F81B0;
+    border-radius: 5px;
+    color: #fff;
+}
+
+.ebl-adminbar * {
+    display: inline-block;
+}
+
+.ebl-adminbar .ebl-button {
+    padding: 10px 15px;
+}
+
+.ebl-action-logout {
+	position: absolute;
+    top: 0px;
+	right: 0px;
+}
+
+/* editor */
+
+.ebl-editable {
+    background: rgba(0, 0, 0, 0.05);
+    transition: background 300ms ease-in-out;
+}
+
+.ebl-editable:hover {
+    outline: 1px solid #ddd;
+	background: rgba(0, 0, 0, 0.1);
+}
+
+.ebl-toolbar {
+    position: absolute;
+    z-index: 99999;
+    padding: 5px;
+    font-family: Verdana, Geneva, sans-serif; 
+    font-size: 1.2em;
+    color: #fff;
+    box-shadow: 1 px 2px 3px -2px #222;
+    background: #333;
+    background-image: linear-gradient(to bottom, #222, #333);
+    opacity: 0.5;
+    border-radius: 3px;
+    transition: opacity 300ms ease-in-out;
+}
+
+.ebl-toolbar:hover {
+    opacity: 1.0;
+}
+
+.ebl-toolbar:after {
+    top: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-color: rgba(51, 51, 51, 0);
+    border-top-color: #333;
+    border-width: 6px;
+    left: 50%;
+    margin-left: -6px;
+}
+
+.ebl-toolbar button {
+    padding: 0px 3px;
+    transition: opacity 300ms ease-in-out;
+}
+
+.ebl-toolbar button:hover {
+    opacity: 0.8;
+}
+
+.ebl-toolbar .ebl-separator {
+	margin: 0px 3px;
+}
+
+.wysiwyg-text-align-left {
+    text-align: left;
+}
+
+.wysiwyg-text-align-right {
+    text-align: right;
+}
+
+.wysiwyg-text-align-center {
+    text-align: center;
+}
+
+.ebl-editor-toolbar-sub {
+    margin: 3px;
+}
+
+.ebl-editor-toolbar-sub.toolbar-sub-2 > :first-child {
+    width: 75%;
+}
+
+.ebl-editor-toolbar-sub.toolbar-sub-2 > :nth-child(2) {
+    width: 25%;
+}
+
+.ebl-editor-toolbar-sub input {
+    color: #fff;
+    background-color: transparent;
+    border: 0px;
+    padding: 0px;
+}
+
+.ebl-editor-toolbar-sub button {
+    color: #fff;
+    background-color: #444;
+    font-size: 0.7em;
+    text-align: center;
+    border-radius: 2px;
+    border: 0px;
+    padding: 3px 0px;
+}
+
+.wysihtml5-commands-disabled {
+    visibility: visible !important;
+    display: inline !important;
+}
+
+/* loading overlay */
+
+.ebl-loading-overlay {
+	position: absolute;
+	z-index: 99999;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	text-align: center;
+	background-color: rgba(255, 255, 255, 0.5);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.5s linear;
+    transition-delay: 0.5s;
+}
+
+.ebl-loading-overlay.visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+.ebl-loading-overlay > div {
+	margin-top: 100px;
+}
+
+/* post */
+
+.ebl-post {
+    position: relative;
+}
+
+.ebl-draft:not(.ebl-post-singleview):not(:hover) {
+    opacity: 0.6;
+    transition: opacity 300ms ease-in-out;
+}
+
+/* CSS3 Tooltip (thanks to http://cbracco.me/a-simple-css-tooltip/) */
+
+/* Base styles for the element that has a tooltip */
+[data-tooltip]{
+    position: relative;
+    cursor: pointer;
+}
+
+/* Base styles for the entire tooltip */
+[data-tooltip]:before,
+[data-tooltip]:after {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;    
+    top: 100%;
+    bottom: auto;
+    left: 40%;
+}
+
+/* Base styles for the tooltip's directional arrow */
+[data-tooltip]:before {
+    z-index: 1001;
+    background: transparent;
+    content: "";
+    margin-top: -12px;
+    margin-bottom: 0;
+    border: 6px solid transparent;
+    border-top-color: transparent;
+    border-bottom-color: #000;
+    border-bottom-color: hsla(0, 0%, 20%, 0.9);
+}
+
+/* Base styles for the tooltip's content area */
+[data-tooltip]:after {
+    z-index: 1000;
+    padding: 8px;
+    width: 160px;
+    text-align: center;
+    border-radius: 5px;
+    background-color: #000;
+    background-color: hsla(0, 0%, 20%, 0.9);
+    color: #fff;
+    content: attr(data-tooltip);
+    font-size: 14px;
+    line-height: 1.2;
+    margin-left: -80px;
+}
+
+/* Show the entire tooltip on hover and focus */
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after,
+[data-tooltip]:focus:before,
+[data-tooltip]:focus:after {
+    visibility: visible;
+    opacity: 1;
+}
