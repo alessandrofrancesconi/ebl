@@ -19,7 +19,7 @@ Ebl, despite being very light, comes with several advantages compared with other
 
 Requirements
 ------------
-Ebl is conceived to run on a PHP >= 5.1 server and it's compatible with IE 8+, Firefox 3.5+, Chrome 1+, Safari 4+.
+Ebl is conceived to run on a PHP 5.3+ server and it's compatible with IE 8+, Firefox 3.5+, Chrome 1+, Safari 4+.
 
 Usage
 -----
