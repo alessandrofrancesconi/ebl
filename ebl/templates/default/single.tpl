@@ -1,12 +1,12 @@
 <article class="{$ebl->singlePost->className}" id="{$ebl->singlePost->id}">
     <header>
         <h2 class="{$ebl->class->postTitle}">{$ebl->singlePost->title}</h2>
-        <span class="fa fa-calendar"></span> <time class="{$ebl->class->postDate}">{$ebl->singlePost->createdAt|date_format:"%d %B %Y"}</time>
+        <span class="fa fa-calendar"></span> <time>{$ebl->singlePost->createdAt|date_format:"%d %B %Y"}</time>
     </header>
 
     <div>Tags: 
     {foreach from=$ebl->singlePost->tags item=tag name=tags} 
-        <span class="{$ebl->class->tag}">{$tag->id}{if not $smarty.foreach.tags.last}, {/if}</span>
+        <span>{$tag->id}{if not $smarty.foreach.tags.last}, {/if}</span>
     {/foreach}
     </div>
 

@@ -1,7 +1,7 @@
 <?php
 
 require ("EblApi.php");
-require ("../libs/Smarty/Smarty.class.php");
+require ("../libs/smarty/Smarty/Smarty.class.php");
 
 class RenderApi extends EblApi {
     
@@ -21,12 +21,9 @@ class RenderApi extends EblApi {
         $eblVar = new stdClass();
         $eblVar->class = new stdClass();
         $eblVar->class->postTitle = "ebl-post-title";
-        $eblVar->class->postDate = "ebl-post-date";
         $eblVar->class->postBody = "ebl-post-body";
         $eblVar->class->postLink = "ebl-post-link";
         $eblVar->class->postComments = "ebl-post-comments";
-        $eblVar->class->postTags = "ebl-post-tags";
-        $eblVar->class->tag = "ebl-tag";
         $eblVar->class->nav = "ebl-nav";
         $eblVar->class->navLink = "ebl-nav-link";
         

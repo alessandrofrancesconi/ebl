@@ -2,9 +2,9 @@
 <article class="{$post->className}" id="{$post->id}">
     <header>
         <h2 class="{$ebl->class->postTitle}"><a href="{$post->permaLink}" class="{$ebl->class->postLink}">{$post->title}</a></h2>
-        <span class="fa fa-calendar"></span> <time class="{$ebl->class->postDate}">{$post->createdAt|date_format:"%d %B %Y"}</time>
+        <span class="fa fa-calendar"></span> <time>{$post->createdAt|date_format:"%d %B %Y"}</time>
     </header>
-    <div class="{$ebl->class->postBody}">{$post->body}</div>
+    <div class="{$ebl->class->postBody}">{$post->body|html_substr:800:"<span>... <a href=\"{$post->permaLink}\" class=\"{$ebl->class->postLink}\">read the whole post</a></span>"}</div>
 </article>
 {/foreach}
 

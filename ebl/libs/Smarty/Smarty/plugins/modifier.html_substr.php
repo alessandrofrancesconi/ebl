@@ -15,11 +15,11 @@
  * Modification to add a string: Sebastian Kuhlmann <sebastiankuhlmann@web.de> 
  * Modification to add user defined closing text before closing tag if tag matches specified elements and added read more link with variable text: 
  * Avi J Liebowitz avij.com 
-  * Clean up by Brice Favre <brice.favre@blogspirit.com> 
+ * Clean up by Brice Favre <brice.favre@blogspirit.com> 
  * Example Usage {$htmlString|html_substr:<lengh>:<string_to_add>:<link>:<link_text>} 
  ------------------------------------------------------------- 
  */ 
- function smarty_modifier_html_substr($string, $length, $addstring, $link, $link_text) { 
+ function smarty_modifier_html_substr($string, $length, $end) { 
      // only execute if text is longer than desired length 
      if (strlen($string) > $length) { 
          if( !empty( $string ) && $length > 0 ) { 
@@ -109,11 +109,11 @@
                  // You may add more tags here to put the link and added text before the closing tag 
                  elseif ($aTag = 'p' || 'div') { 
                      $aTag = array_pop( $tagsArray ); 
-                     $ret .= $addstring . "<a href=\"". $link . "\" alt=\"". $link_text . "\">" . $link_text . "</a></" . $aTag . ">\n"; 
+                     $ret .= $end . "\n"; 
                  } 
                  else { 
                      $aTag = array_pop( $tagsArray ); 
-                     $ret .= "</" . $aTag . ">" . $addstring . "<a href=\"". $link . "\" alt=\"". $link_text . "\">" . $link_text . "</a>\n"; 
+                     $ret .= "</" . $aTag . ">" . $end ."\n"; 
                  } 
              } 
          } else { 
