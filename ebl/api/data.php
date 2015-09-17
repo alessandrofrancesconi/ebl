@@ -228,9 +228,9 @@ class DataApi extends EblApi {
     }
     
     private function setDocumentId($doc, $source) {
-		$this->initDb();
-		
-		// restore encoded tags to original character
+        $this->initDb();
+        
+        // restore encoded tags to original character
         $id = htmlspecialchars_decode($source);
         // all is lowercase
         $id = strtolower($id);
@@ -244,8 +244,8 @@ class DataApi extends EblApi {
         $id = trim($id, '-');
         // set a maximum width of 50 chars
         $id = substr($id, 0, 50);
-		
-		// check if another doc with the same id already exists
+        
+        // check if another doc with the same id already exists
         $sameId = $this->repo->query()
             ->where('_id', '===', $id)
             ->where('updatedAt', '!=', $doc->updatedAt) // exclude this very same doc
@@ -254,9 +254,9 @@ class DataApi extends EblApi {
         // in case, append a progressive number to the ID
         $count = $sameId->count();
         if ($count > 0) $id .= "-". ($count + 1);
-		
-		$doc->setId($id);
-	}
+        
+        $doc->setId($id);
+    }
     
     private function publishPost($title, $body, $tags = "[]", $draft, $token) {
         $this->throwIfNotAuth($token);
