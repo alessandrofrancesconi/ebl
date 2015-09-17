@@ -94,7 +94,7 @@ class RenderApi extends EblApi {
             else $html .= $this->getPostsPage($page, $config);
         }
         catch (Exception $e) {
-            if ($e instanceof DatabaseException && $e->getCode() == self::EBL_ERROR_DB_SELECT && $post != null) {
+            if ($e instanceof DatabaseException && $e->getCode() == self::EBL_ERROR_NOTFOUND && $post != null) {
                 return $this->getHtml(null, false, $page, $config);
             }
             else throw $e;
@@ -196,7 +196,7 @@ class RenderApi extends EblApi {
         
         $docs = $query->execute();
         if (count($docs) == 0) {
-            throw new DatabaseException("can't find post with ID '". $postId ."'", self::EBL_ERROR_DB_SELECT);
+            throw new DatabaseException("can't find post with ID '". $postId ."'", self::EBL_ERROR_NOTFOUND);
         }
         
         $doc = $docs[0];
