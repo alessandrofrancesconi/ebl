@@ -2,7 +2,7 @@
  'use strict';
 /**
  * @license 
- * Ebl: the embeddable blogging platform v0.0.1
+ * Ebl: the embeddable blog platform v0.0.1
  * https://github.com/alessandrofrancesconi/ebl
  *
  * Author: Alessandro Francesconi (http://www.alessandrofrancesconi.it/)

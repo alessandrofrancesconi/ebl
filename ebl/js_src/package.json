@@ -7,7 +7,7 @@
     "grunt-contrib-concat": "^0.5.1",
     "grunt-contrib-uglify": "^0.9.1"
   },
-  "description": "Ebl: the embeddable blogging engine",
+  "description": "Ebl: the embeddable blog engine",
   "main": "Gruntfile.js",
   "repository": {
     "type": "git",
