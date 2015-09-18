@@ -1,3 +1,9 @@
+/** Adds all the given files as dependencies in the Document.
+ * Supported formats: JS and CSS.
+ * @param {Object} list - An array of dependecy information. Every element is an object structured like this:
+ *                        { type : "<js/css>", url : "<url of the resource>"};
+ * @param {finishCallback} onDone - Function called when all the files have been included
+ */
 function includeDependencies (list, onDone) {
     var count = 0;
     var total = list.length;

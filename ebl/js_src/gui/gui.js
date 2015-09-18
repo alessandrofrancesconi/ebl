@@ -43,7 +43,7 @@ function showPostSection(postId, andEdit) {
             setHistoryTitle(p.title);
             
             if (andEdit === true) switchToEditorMode();
-            else changeAdminBarMode(AdminBarMode.EDIT_CURRENT);
+            refreshAdminBarMode();
             
             var onPostOpened = gState.config.onPostOpened;
             if (typeof onPostOpened == 'function') {
@@ -85,7 +85,9 @@ function showNewPostSection() {
             enableNavLinks(newTemplate);
             
             setHistoryTitle(eblLang.editor_placeholder_title);
+            
             switchToEditorMode();
+            refreshAdminBarMode();
         },
         function(code, msg) {
             hideLoadingOverlay();
@@ -114,12 +116,14 @@ function showPreviewSection() {
             
             var newTemplate = c.querySelector('ebl-template');
             lState.page = parseInt(getDataAttribute(newTemplate, 'eblPageNum'), 0);
+            deleteProperty(lState, 'post');
             
             activateScripts(newTemplate);
             enablePostLinks(newTemplate);
             enableNavLinks(newTemplate);
             
             setHistoryTitle(null);
+            refreshAdminBarMode();
             
             var onPageChanged = gState.config.onPageChanged;
             if (typeof onPageChanged == 'function') {
@@ -134,8 +138,6 @@ function showPreviewSection() {
             c.insertAdjacentHTML('beforeend', msg);
         }
     );
-    
-    changeAdminBarMode(AdminBarMode.CREATE_NEW);
 }
 
 function enablePostLinks(elem) {
@@ -194,7 +196,10 @@ function enableNavLinks(elem) {
 function setAdminMode() {
     var adminBar = gState.container.querySelector('.ebl-adminbar');
     
-    if (gState.isAdmin) showElement(adminBar);
+    if (gState.isAdmin) {
+        refreshAdminBarMode();
+        showElement(adminBar);
+    }
     else {
         unsetEditorMode();
         hideElement(adminBar);

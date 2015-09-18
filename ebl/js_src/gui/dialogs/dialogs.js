@@ -201,6 +201,8 @@ function showDeleteDialog(postId) {
             function(res) {
                 hideLoadingOverlay();
                 showPopup(PopupType.SUCCESS, eblLang.deletepost_ok);
+                
+                deleteProperty(lState.post);
                 showPreviewSection();
             },
             function(code, msg) {

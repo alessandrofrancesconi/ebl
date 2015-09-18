@@ -661,6 +661,15 @@ function clone(obj) {
     return copy;
 }
 
+ /** Cross-compatible function to invalidate/remove a property from an object
+ * @param {object} obj - A Javascript object
+ * @param {string} prop - The name of the property
+ */
+function deleteProperty(obj, prop) {
+    obj[prop] = undefined;
+    try { delete obj[prop]; } catch (e) {}
+}
+
  /** Escapes opening and closing HTML tags
  * @param {string} str - String to escape
  */
@@ -959,6 +968,12 @@ function isDOMElement(obj){
     );
 }
 
+/** Adds all the given files as dependencies in the Document.
+ * Supported formats: JS and CSS.
+ * @param {Object} list - An array of dependecy information. Every element is an object structured like this:
+ *                        { type : "<js/css>", url : "<url of the resource>"};
+ * @param {finishCallback} onDone - Function called when all the files have been included
+ */
 function includeDependencies (list, onDone) {
     var count = 0;
     var total = list.length;
@@ -1046,7 +1061,6 @@ function switchToEditorMode () {
     }
     
     initEditors();
-    changeAdminBarMode(AdminBarMode.SAVE_CHANGES);
 }
 
 function initEditors() {        
@@ -1242,7 +1256,6 @@ function initEditors() {
 
 function unsetEditorMode (resetValues) {
     hideElement(gState.container.querySelector('.ebl-editor-toolbar'));
-    changeAdminBarMode(AdminBarMode.EDIT_CURRENT);
     
     if (!isNullOrUndef(lState.editors)) {
         var titleEditor = lState.editors.title;
@@ -1252,8 +1265,8 @@ function unsetEditorMode (resetValues) {
         titleEditor.blur();
         titleEditor.contentEditable = false;
         removeClass(titleEditor, 'ebl-editable');
-        if (resetValues && titleEditor.hasOwnProperty('oldValue')) titleEditor.innerHTML = titleEditor.oldValue;            
-        delete titleEditor.oldValue;
+        if (resetValues && !isNullOrUndef(titleEditor.oldValue)) titleEditor.innerHTML = titleEditor.oldValue;            
+        deleteProperty(titleEditor, 'oldValue');
         
         // unset content
         contentEditor.destroy();
@@ -1367,7 +1380,7 @@ function showPostSection(postId, andEdit) {
             setHistoryTitle(p.title);
             
             if (andEdit === true) switchToEditorMode();
-            else changeAdminBarMode(AdminBarMode.EDIT_CURRENT);
+            refreshAdminBarMode();
             
             var onPostOpened = gState.config.onPostOpened;
             if (typeof onPostOpened == 'function') {
@@ -1409,7 +1422,9 @@ function showNewPostSection() {
             enableNavLinks(newTemplate);
             
             setHistoryTitle(eblLang.editor_placeholder_title);
+            
             switchToEditorMode();
+            refreshAdminBarMode();
         },
         function(code, msg) {
             hideLoadingOverlay();
@@ -1438,12 +1453,14 @@ function showPreviewSection() {
             
             var newTemplate = c.querySelector('ebl-template');
             lState.page = parseInt(getDataAttribute(newTemplate, 'eblPageNum'), 0);
+            deleteProperty(lState, 'post');
             
             activateScripts(newTemplate);
             enablePostLinks(newTemplate);
             enableNavLinks(newTemplate);
             
             setHistoryTitle(null);
+            refreshAdminBarMode();
             
             var onPageChanged = gState.config.onPageChanged;
             if (typeof onPageChanged == 'function') {
@@ -1458,8 +1475,6 @@ function showPreviewSection() {
             c.insertAdjacentHTML('beforeend', msg);
         }
     );
-    
-    changeAdminBarMode(AdminBarMode.CREATE_NEW);
 }
 
 function enablePostLinks(elem) {
@@ -1518,7 +1533,10 @@ function enableNavLinks(elem) {
 function setAdminMode() {
     var adminBar = gState.container.querySelector('.ebl-adminbar');
     
-    if (gState.isAdmin) showElement(adminBar);
+    if (gState.isAdmin) {
+        refreshAdminBarMode();
+        showElement(adminBar);
+    }
     else {
         unsetEditorMode();
         hideElement(adminBar);
@@ -1729,6 +1747,8 @@ function showDeleteDialog(postId) {
             function(res) {
                 hideLoadingOverlay();
                 showPopup(PopupType.SUCCESS, eblLang.deletepost_ok);
+                
+                deleteProperty(lState.post);
                 showPreviewSection();
             },
             function(code, msg) {
@@ -1837,17 +1857,13 @@ function showPopup(type, text) {
 }
 
 
-// Defines the possible states of the Admin bar
-var AdminBarMode = {
-    CREATE_NEW: 0,      // The default status, lets the user create a new post
-    EDIT_CURRENT: 1,    // Set to this when viewing a post
-    SAVE_CHANGES: 2     // Set to this when editing a post
-};
 
 function buildAdminBar () {
     var bar = document.createElement('div');
     addClass(bar, 'ebl-adminbar', 'ebl-unselectable');
-    //hideElement(bar);
+    
+    bar.origDisplay = 'block';
+    bar.style.display = 'none';
             
     // 'add new' container
     var newContainer = document.createElement('div');
@@ -1876,6 +1892,7 @@ function buildAdminBar () {
         changeHistoryState(newState, null, newParams);
         
         switchToEditorMode();
+        refreshAdminBarMode();
     };
     
     var deletePost = createButton('ebl-action-delete');
@@ -1928,32 +1945,29 @@ function buildAdminBar () {
     bar.appendChild(logOut);
     
     prependTo(gState.container, bar);
-    
-    if (isNullOrUndef(lState.post)) changeAdminBarMode(AdminBarMode.CREATE_NEW);
-    else if (lState.post.status === PostStatus.NEW) changeAdminBarMode(AdminBarMode.SAVE_CHANGES);
-    else changeAdminBarMode(AdminBarMode.EDIT_CURRENT);
+    refreshAdminBarMode();
 }
 
-function changeAdminBarMode(m) {
+function refreshAdminBarMode() {
     var c = gState.container;
     var newContainer = c.querySelector('.ebl-adminbar-new');
-    var editContainer = c.querySelector('.ebl-adminbar-edit');
     var publishContainer = c.querySelector('.ebl-adminbar-publish');
+    var editContainer = c.querySelector('.ebl-adminbar-edit');
     
-    if (m == AdminBarMode.CREATE_NEW) {
+    if (isNullOrUndef(lState.post)) { // "CREATE NEW" mode
         showElement(newContainer);
-        hideElement(editContainer);
         hideElement(publishContainer);
-    }
-    else if (m == AdminBarMode.EDIT_CURRENT) {
-        hideElement(newContainer);
-        showElement(editContainer);
-        hideElement(publishContainer);
-    }
-    else if (m == AdminBarMode.SAVE_CHANGES) {
-        hideElement(newContainer);
         hideElement(editContainer);
+    }
+    else if (lState.post.edit === true) { // "EDITING" mode
+        hideElement(newContainer);
         showElement(publishContainer);
+        hideElement(editContainer);
+    }
+    else { // "SINGLE POST" mode
+        hideElement(newContainer);
+        hideElement(publishContainer);
+        showElement(editContainer);
     }
 }
 
@@ -2120,7 +2134,7 @@ function buildTitleToolbar() {
  * Enables a seamless navigation using History API
  * *************************************************/
 
- var hasPreviousHistory = false;
+var hasPreviousHistory = false;
 
 function setHistoryListener() {
     if (!isHistorySupported()) {
@@ -2156,8 +2170,8 @@ function changeHistoryState(data, title, query, replace) {
  * @param {number} count - History steps
  */
 function goHistoryBack(count) {
-    if (!hasPreviousHistory) return;
-    window.history.back(count);
+    if (!hasPreviousHistory) showPreviewSection();
+    else window.history.back(count);
 }
 
 /**
@@ -2173,7 +2187,7 @@ function setHistoryTitle(t) {
     if (!isNullOrUndef(t)) {
         fTitle = gState.config.pageTitleFormat
             .replace(/{original_title}/, oTitle)
-            .replace(/{ebl_title}/, t.replace('<','&lt;').replace('>','&gt;').replace(' & ',' &amp; '));
+            .replace(/{ebl_title}/, safeTags(t));
     }
     else fTitle = oTitle;
     

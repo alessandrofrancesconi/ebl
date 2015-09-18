@@ -21,6 +21,15 @@ function clone(obj) {
     return copy;
 }
 
+ /** Cross-compatible function to invalidate/remove a property from an object
+ * @param {object} obj - A Javascript object
+ * @param {string} prop - The name of the property
+ */
+function deleteProperty(obj, prop) {
+    obj[prop] = undefined;
+    try { delete obj[prop]; } catch (e) {}
+}
+
  /** Escapes opening and closing HTML tags
  * @param {string} str - String to escape
  */

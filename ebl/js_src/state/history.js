@@ -2,7 +2,7 @@
  * Enables a seamless navigation using History API
  * *************************************************/
 
- var hasPreviousHistory = false;
+var hasPreviousHistory = false;
 
 function setHistoryListener() {
     if (!isHistorySupported()) {
@@ -38,8 +38,8 @@ function changeHistoryState(data, title, query, replace) {
  * @param {number} count - History steps
  */
 function goHistoryBack(count) {
-    if (!hasPreviousHistory) return;
-    window.history.back(count);
+    if (!hasPreviousHistory) showPreviewSection();
+    else window.history.back(count);
 }
 
 /**
@@ -55,7 +55,7 @@ function setHistoryTitle(t) {
     if (!isNullOrUndef(t)) {
         fTitle = gState.config.pageTitleFormat
             .replace(/{original_title}/, oTitle)
-            .replace(/{ebl_title}/, t.replace('<','&lt;').replace('>','&gt;').replace(' & ',' &amp; '));
+            .replace(/{ebl_title}/, safeTags(t));
     }
     else fTitle = oTitle;
     

@@ -1,14 +1,10 @@
-// Defines the possible states of the Admin bar
-var AdminBarMode = {
-    CREATE_NEW: 0,      // The default status, lets the user create a new post
-    EDIT_CURRENT: 1,    // Set to this when viewing a post
-    SAVE_CHANGES: 2     // Set to this when editing a post
-};
 
 function buildAdminBar () {
     var bar = document.createElement('div');
     addClass(bar, 'ebl-adminbar', 'ebl-unselectable');
-    //hideElement(bar);
+    
+    bar.origDisplay = 'block';
+    bar.style.display = 'none';
             
     // 'add new' container
     var newContainer = document.createElement('div');
@@ -37,6 +33,7 @@ function buildAdminBar () {
         changeHistoryState(newState, null, newParams);
         
         switchToEditorMode();
+        refreshAdminBarMode();
     };
     
     var deletePost = createButton('ebl-action-delete');
@@ -89,31 +86,28 @@ function buildAdminBar () {
     bar.appendChild(logOut);
     
     prependTo(gState.container, bar);
-    
-    if (isNullOrUndef(lState.post)) changeAdminBarMode(AdminBarMode.CREATE_NEW);
-    else if (lState.post.status === PostStatus.NEW) changeAdminBarMode(AdminBarMode.SAVE_CHANGES);
-    else changeAdminBarMode(AdminBarMode.EDIT_CURRENT);
+    refreshAdminBarMode();
 }
 
-function changeAdminBarMode(m) {
+function refreshAdminBarMode() {
     var c = gState.container;
     var newContainer = c.querySelector('.ebl-adminbar-new');
-    var editContainer = c.querySelector('.ebl-adminbar-edit');
     var publishContainer = c.querySelector('.ebl-adminbar-publish');
+    var editContainer = c.querySelector('.ebl-adminbar-edit');
     
-    if (m == AdminBarMode.CREATE_NEW) {
+    if (isNullOrUndef(lState.post)) { // "CREATE NEW" mode
         showElement(newContainer);
-        hideElement(editContainer);
         hideElement(publishContainer);
-    }
-    else if (m == AdminBarMode.EDIT_CURRENT) {
-        hideElement(newContainer);
-        showElement(editContainer);
-        hideElement(publishContainer);
-    }
-    else if (m == AdminBarMode.SAVE_CHANGES) {
-        hideElement(newContainer);
         hideElement(editContainer);
+    }
+    else if (lState.post.edit === true) { // "EDITING" mode
+        hideElement(newContainer);
         showElement(publishContainer);
+        hideElement(editContainer);
+    }
+    else { // "SINGLE POST" mode
+        hideElement(newContainer);
+        hideElement(publishContainer);
+        showElement(editContainer);
     }
 }

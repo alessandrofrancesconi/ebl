@@ -27,7 +27,6 @@ function switchToEditorMode () {
     }
     
     initEditors();
-    changeAdminBarMode(AdminBarMode.SAVE_CHANGES);
 }
 
 function initEditors() {        
@@ -223,7 +222,6 @@ function initEditors() {
 
 function unsetEditorMode (resetValues) {
     hideElement(gState.container.querySelector('.ebl-editor-toolbar'));
-    changeAdminBarMode(AdminBarMode.EDIT_CURRENT);
     
     if (!isNullOrUndef(lState.editors)) {
         var titleEditor = lState.editors.title;
@@ -233,8 +231,8 @@ function unsetEditorMode (resetValues) {
         titleEditor.blur();
         titleEditor.contentEditable = false;
         removeClass(titleEditor, 'ebl-editable');
-        if (resetValues && titleEditor.hasOwnProperty('oldValue')) titleEditor.innerHTML = titleEditor.oldValue;            
-        delete titleEditor.oldValue;
+        if (resetValues && !isNullOrUndef(titleEditor.oldValue)) titleEditor.innerHTML = titleEditor.oldValue;            
+        deleteProperty(titleEditor, 'oldValue');
         
         // unset content
         contentEditor.destroy();
