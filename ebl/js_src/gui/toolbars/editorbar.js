@@ -135,17 +135,8 @@ function buildTitleToolbar() {
     var tags = createButton('ebl-action-title-tag', eblLang.title_toolbar_tags);
     addClass(tags, 'fa', 'fa-tags');
     tags.onmousedown = function() {
-        var tagsString = '';
-        var currentTags = lState.post.tags;
-        if (isNullOrUndef(currentTags)) currentTags = [];
-        
-        for (var i = 0; i < currentTags.length; ++i) {
-            tagsString += currentTags[i].id;
-            if (i < currentTags.length - 1) tagsString += ', ';
-        }
-        
-        showTagsDialog(tagsString, function (newTags) {
-            lState.post.tags = parseTags(newTags);
+        showTagsDialog(parseTagsFromArray(lState.post.tags), function (newTags) {
+            lState.post.tags = parseTagsFromString(newTags);
         });
     };
     

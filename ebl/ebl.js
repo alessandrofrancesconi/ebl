@@ -43,7 +43,7 @@ function bootUp () {
         if (post.status != PostStatus.NEW) {
             post.id = getDataAttribute(template, 'eblPostId');
             post.title = getDataAttribute(template, 'eblPostTitle');
-            post.tags = parseTags(getDataAttribute(template, 'eblPostTags'));
+            post.tags = parseTagsFromString(getDataAttribute(template, 'eblPostTags'));
             
             var eblEdit = getUrlParam(location.search, 'ebl-edit');
             if (eblEdit !== null && parseInt(eblEdit, 10) == 1) post.edit = true;
@@ -714,13 +714,26 @@ function bindToEvent(elem, event, callback) {
     else elem.attachEvent(event, callback);
 }
 
-function parseTags(str) {
+function parseTagsFromString(str) {
     var out = [];
-    var tagIds = str.split(',');
-    for (var i = 0; i < tagIds.length; ++i) {
-        out.push({ id: tagIds[i] });
+    var tagSplit = str.split(',');    
+    var ids = [];
+    for (var i = 0; i < tagSplit.length; ++i) {
+        var t = { id : tagSplit[i].trim() };
+        if (t.id.length > 0 && ids.indexOf(t.id) == -1) {
+            out.push(t);
+            ids.push(t.id);
+        }
     }
-    
+    return out;
+}
+
+function parseTagsFromArray(arr) {
+    var out = "";
+    for (var i = 0; i < arr.length; ++i) {
+        out += arr[i].id;
+        if (i < arr.length - 1) out += ', ';
+    }
     return out;
 }
 
@@ -2108,17 +2121,8 @@ function buildTitleToolbar() {
     var tags = createButton('ebl-action-title-tag', eblLang.title_toolbar_tags);
     addClass(tags, 'fa', 'fa-tags');
     tags.onmousedown = function() {
-        var tagsString = '';
-        var currentTags = lState.post.tags;
-        if (isNullOrUndef(currentTags)) currentTags = [];
-        
-        for (var i = 0; i < currentTags.length; ++i) {
-            tagsString += currentTags[i].id;
-            if (i < currentTags.length - 1) tagsString += ', ';
-        }
-        
-        showTagsDialog(tagsString, function (newTags) {
-            lState.post.tags = parseTags(newTags);
+        showTagsDialog(parseTagsFromArray(lState.post.tags), function (newTags) {
+            lState.post.tags = parseTagsFromString(newTags);
         });
     };
     

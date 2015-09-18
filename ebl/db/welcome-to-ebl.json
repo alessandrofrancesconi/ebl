@@ -1,0 +1,17 @@
+{
+    "type": "post",
+    "title": "Welcome to Ebl!",
+    "body": "<p class=\"wysiwyg-text-align-center\"><b>Congratulations!<\/b><\/p><p class=\"wysiwyg-text-align-left\">Ebl, the embeddable blog platform, is now running on your website. Did you choose your administrator passphrase? If so, it's time to <a href=\"#ebl-login\">log-in<\/a> and start typing some good news.<\/p><p class=\"wysiwyg-text-align-left\">And remember, I won't be offended if you want to delete this post. I'll still love you \u2665<\/p>",
+    "bodyFormat": "html",
+    "tags": [
+        {
+            "id": "welcome"
+        },
+        {
+            "id": "read-me"
+        }
+    ],
+    "createdAt": "2015-09-18T14:17:22",
+    "updatedAt": "2015-09-18T14:18:13",
+    "status": "published"
+}

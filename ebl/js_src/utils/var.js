@@ -74,12 +74,25 @@ function bindToEvent(elem, event, callback) {
     else elem.attachEvent(event, callback);
 }
 
-function parseTags(str) {
+function parseTagsFromString(str) {
     var out = [];
-    var tagIds = str.split(',');
-    for (var i = 0; i < tagIds.length; ++i) {
-        out.push({ id: tagIds[i] });
+    var tagSplit = str.split(',');    
+    var ids = [];
+    for (var i = 0; i < tagSplit.length; ++i) {
+        var t = { id : tagSplit[i].trim() };
+        if (t.id.length > 0 && ids.indexOf(t.id) == -1) {
+            out.push(t);
+            ids.push(t.id);
+        }
     }
-    
+    return out;
+}
+
+function parseTagsFromArray(arr) {
+    var out = "";
+    for (var i = 0; i < arr.length; ++i) {
+        out += arr[i].id;
+        if (i < arr.length - 1) out += ', ';
+    }
     return out;
 }

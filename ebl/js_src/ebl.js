@@ -41,7 +41,7 @@ function bootUp () {
         if (post.status != PostStatus.NEW) {
             post.id = getDataAttribute(template, 'eblPostId');
             post.title = getDataAttribute(template, 'eblPostTitle');
-            post.tags = parseTags(getDataAttribute(template, 'eblPostTags'));
+            post.tags = parseTagsFromString(getDataAttribute(template, 'eblPostTags'));
             
             var eblEdit = getUrlParam(location.search, 'ebl-edit');
             if (eblEdit !== null && parseInt(eblEdit, 10) == 1) post.edit = true;
