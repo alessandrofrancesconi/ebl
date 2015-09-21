@@ -1,22 +1,16 @@
 <?php 
- /* 
+/* 
  * Smarty plugin 
- * http://www.smarty.net/forums/viewtopic.php?t=533 
  ----------------------------------------------------- 
  * File: modifier.html_substr.php 
  * Type: modifier 
  * Name: html_substr 
- * Version: 1.2 
- * Date: January 13th, 2010 
+ * Version: 1.0 
+ * Date: September 21th, 2015
  * Purpose: Cut a string preserving any tag nesting and matching. 
  * Install: Drop into the plugin directory. 
- * Author: Original Javascript Code: Benjamin Lupu <lupufr@aol.com> 
- * Translation to PHP & Smarty: Edward Dale <scompt@scompt.com> 
- * Modification to add a string: Sebastian Kuhlmann <sebastiankuhlmann@web.de> 
- * Modification to add user defined closing text before closing tag if tag matches specified elements and added read more link with variable text: 
- * Avi J Liebowitz avij.com 
- * Clean up by Brice Favre <brice.favre@blogspirit.com> 
- * Example Usage {$htmlString|html_substr:<lengh>:<string_to_add>:<link>:<link_text>} 
+ * Author: Originally from http://www.smarty.net/forums/viewtopic.php?t=533, adapted for Ebl by Alessandro Francesconi 
+ * Example Usage {$htmlString|html_substr:<lengh>:<string_to_add>} 
  ------------------------------------------------------------- 
  */ 
  function smarty_modifier_html_substr($string, $length, $end) { 

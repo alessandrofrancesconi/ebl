@@ -76,6 +76,8 @@ function bindToEvent(elem, event, callback) {
 
 function parseTagsFromString(str) {
     var out = [];
+    if (isNullOrUndef(str)) return out;
+    
     var tagSplit = str.split(',');    
     var ids = [];
     for (var i = 0; i < tagSplit.length; ++i) {
@@ -90,6 +92,8 @@ function parseTagsFromString(str) {
 
 function parseTagsFromArray(arr) {
     var out = "";
+    if (isNullOrUndef(arr)) return out;
+    
     for (var i = 0; i < arr.length; ++i) {
         out += arr[i].id;
         if (i < arr.length - 1) out += ', ';
