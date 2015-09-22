@@ -273,14 +273,14 @@ pre.ebl-pre {
 /* Icons */
 
 @font-face {
-    font-family: 'eblicons';
-    src:url('fonts/eblicons.eot?-xt7xhx');
-    src:url('fonts/eblicons.eot?#iefix-xt7xhx') format('embedded-opentype'),
-        url('fonts/eblicons.ttf?-xt7xhx') format('truetype'),
-        url('fonts/eblicons.woff?-xt7xhx') format('woff'),
-        url('fonts/eblicons.svg?-xt7xhx#eblicons') format('svg');
-    font-weight: normal;
-    font-style: normal;
+	font-family: 'eblicons';
+	src:url('fonts/eblicons.eot?-3t9jbq');
+	src:url('fonts/eblicons.eot?#iefix-3t9jbq') format('embedded-opentype'),
+		url('fonts/eblicons.ttf?-3t9jbq') format('truetype'),
+		url('fonts/eblicons.woff?-3t9jbq') format('woff'),
+		url('fonts/eblicons.svg?-3t9jbq#eblicons') format('svg');
+	font-weight: normal;
+	font-style: normal;
 }
 
 [class^="ebl-icon-"], [class*=" ebl-icon-"] {
