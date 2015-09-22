@@ -57,7 +57,6 @@ function bootUp () {
     var dependencies = [];
     dependencies.push({url: scriptPath + '/languages/' + gState.config.language + '.js', type: 'js'});
     dependencies.push({url: scriptPath + '/css/base.css', type: 'css'});
-    dependencies.push({url: scriptPath + '/css/font-awesome/css/font-awesome.min.css', type: 'css'});
     if (!hasAlertify() && !isBadBrowser()) {
         dependencies.push({url: scriptPath + '/libs/alertify/alertify.min.js', type: 'js'});
         dependencies.push({url: scriptPath + '/libs/alertify/css/alertify.min.css', type: 'css'});

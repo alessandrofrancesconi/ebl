@@ -8,56 +8,56 @@ function buildEditorToolbar() {
     var format = document.createElement('div');
     
     var undo = createButton('ebl-action-editor-undo', eblLang.editor_toolbar_undo);
-    addClass(undo, 'fa', 'fa-undo');
+    addClass(undo, 'fa', 'ebl-icon-rotate-left');
     setDataAttribute(undo, 'wysihtml5Command', 'undo');
     
     var textBold = createButton('ebl-action-editor-bold', eblLang.editor_toolbar_textBold);
-    addClass(textBold, 'fa', 'fa-bold');
+    addClass(textBold, 'fa', 'ebl-icon-bold');
     setDataAttribute(textBold, 'wysihtml5Command', 'bold');
     
     var textItalic = createButton('ebl-action-editor-italic', eblLang.editor_toolbar_textItalic);
-    addClass(textItalic, 'fa', 'fa-italic');
+    addClass(textItalic, 'fa', 'ebl-icon-italic');
     setDataAttribute(textItalic, 'wysihtml5Command', 'italic');
     
     var textUnderline = createButton('ebl-action-editor-underline', eblLang.editor_toolbar_textUnderline);
-    addClass(textUnderline, 'fa', 'fa-underline');
+    addClass(textUnderline, 'fa', 'ebl-icon-underline');
     setDataAttribute(textUnderline, 'wysihtml5Command', 'underline');
     
     var textH1 = createButton('ebl-action-editor-h1', eblLang.editor_toolbar_textH1);
-    addClass(textH1, 'fa', 'fa-header');
+    addClass(textH1, 'fa', 'ebl-icon-header');
     setDataAttribute(textH1, 'wysihtml5Command', 'formatBlock');
     setDataAttribute(textH1, 'wysihtml5CommandValue', 'h1');
     
     var alignLeft = createButton('ebl-action-editor-alignleft', eblLang.editor_toolbar_textAlignLeft);
-    addClass(alignLeft, 'fa', 'fa-align-left');
+    addClass(alignLeft, 'fa', 'ebl-icon-align-left');
     setDataAttribute(alignLeft, 'wysihtml5Command', 'justifyLeft');
     
     var alignCenter = createButton('ebl-action-editor-aligncenter', eblLang.editor_toolbar_textAlignCenter);
-    addClass(alignCenter, 'fa', 'fa-align-center');
+    addClass(alignCenter, 'fa', 'ebl-icon-align-center');
     setDataAttribute(alignCenter, 'wysihtml5Command', 'justifyCenter');
     
     var alignRight = createButton('ebl-action-editor-alignright', eblLang.editor_toolbar_textAlignRight);
-    addClass(alignRight, 'fa', 'fa-align-right');
+    addClass(alignRight, 'fa', 'ebl-icon-align-right');
     setDataAttribute(alignRight, 'wysihtml5Command', 'justifyRight');
     
     var addUl = createButton('ebl-action-editor-addul', eblLang.editor_toolbar_addUl);
-    addClass(addUl, 'fa', 'fa-list-ul');
+    addClass(addUl, 'fa', 'ebl-icon-list-ul');
     setDataAttribute(addUl, 'wysihtml5Command', 'insertUnorderedList');
     
     var addOl = createButton('ebl-action-editor-addol', eblLang.editor_toolbar_addOl);
-    addClass(addOl, 'fa', 'fa-list-ol');
+    addClass(addOl, 'fa', 'ebl-icon-list-ol');
     setDataAttribute(addOl, 'wysihtml5Command', 'insertOrderedList');
     
     var addImage = createButton('ebl-action-editor-addimage', eblLang.editor_toolbar_addImage);
-    addClass(addImage, 'fa', 'fa-picture-o');
+    addClass(addImage, 'fa', 'ebl-icon-image');
     setDataAttribute(addImage, 'wysihtml5Command', 'insertImage');
     
     var addLink = createButton('ebl-action-editor-addlink', eblLang.editor_toolbar_addLink);
-    addClass(addLink, 'fa', 'fa-link');
+    addClass(addLink, 'fa', 'ebl-icon-chain');
     setDataAttribute(addLink, 'wysihtml5Command', 'createLink');
     
     var showHtml = createButton('ebl-action-editor-html', eblLang.editor_toolbar_editHTML);
-    addClass(showHtml, 'fa', 'fa-file-code-o');
+    addClass(showHtml, 'fa', 'ebl-icon-file-code-o');
     setDataAttribute(showHtml, 'wysihtml5Action', 'change_view');
     
     format.appendChild(undo);
@@ -133,7 +133,7 @@ function buildTitleToolbar() {
     addClass(bar, 'ebl-toolbar', 'ebl-title-toolbar');
     
     var tags = createButton('ebl-action-title-tag', eblLang.title_toolbar_tags);
-    addClass(tags, 'fa', 'fa-tags');
+    addClass(tags, 'fa', 'ebl-icon-tags');
     tags.onmousedown = function() {
         showTagsDialog(parseTagsFromArray(lState.post.tags), function (newTags) {
             lState.post.tags = parseTagsFromString(newTags);
