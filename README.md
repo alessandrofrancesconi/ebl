@@ -63,4 +63,3 @@ Ebl whould be nothing without the help of some cool libraries:
 * [Smarty](http://www.smarty.net/), a fast and simple PHP template engine
 * [wysihtml](http://wysihtml.com/), the typewriter for the modern web
 * [AlertifyJS](http://alertifyjs.com/), for beautiful web dialogs
-* [FontAwesome](https://fortawesome.github.io/Font-Awesome/), for awesome icons
