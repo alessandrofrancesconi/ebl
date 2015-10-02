@@ -26,7 +26,7 @@ Usage
 
 Let the code speak for me:
 
-```
+```html
 <!DOCTYPE html>
 <html>
 <head>
