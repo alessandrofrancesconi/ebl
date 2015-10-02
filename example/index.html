@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>This is Ebl</title>
-    
-    <script type="text/javascript" src="../ebl/ebl.js"></script>
-    <script type="text/javascript" src="domready.js"></script>    
-    <script type="text/javascript">
-        DomReady.ready(function() {
-            Ebl.init("put-me-here", {
-                postsPerPage: 3
-            });
-        });
-    </script>
-    
+    <title>Ebl!</title>
 </head>
 
 <body>
+    
+    <!-- this div will be filled with the Ebl interface -->
     <div id="put-me-here"></div>
+    
+    <!-- include the Ebl JS at the end of the page -->
+    <script type="text/javascript" src="../ebl/ebl.js"></script>
+    <script type="text/javascript">
+        // tell Ebl what element to use
+        Ebl.init("put-me-here", {
+            postsPerPage: 3
+        });
+    </script>
 </body>
 
 </html>

@@ -30,24 +30,24 @@ Let the code speak for me:
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Ebl!</title>
-    <script type="text/javascript" src="domready.js"></script>
-    
-    <!-- include the Ebl JS -->
-    <script type="text/javascript" src="ebl/ebl.min.js"></script>
-	
-	<script type="text/javascript">
-		DomReady.ready(function() {
-            // wait for the page to load and tell Ebl what element to use
-            Ebl.init("put-me-here");
-		});
-	</script>
+    <title>Ebl!</title>
 </head>
 
 <body>
+    
     <!-- this div will be filled with the Ebl interface -->
-	<div id="put-me-here"></div>
+    <div id="put-me-here"></div>
+    
+    <!-- include the Ebl JS at the end of the page -->
+    <script type="text/javascript" src="ebl/ebl.min.js"></script>
+    <script type="text/javascript">
+        // tell Ebl what element to use
+        Ebl.init("put-me-here", {
+            postsPerPage: 3
+        });
+    </script>
 </body>
+
 </html>
 ```
 
