@@ -301,6 +301,12 @@ pre.ebl-pre {
     font-size: 2em;
 }
 
+.ebl-icon-trash-o:before {
+	content: "\f014";
+}
+.ebl-icon-pencil-square-o:before {
+	content: "\f044";
+}
 .ebl-icon-file-text-o:before {
 	content: "\e600";
 }
