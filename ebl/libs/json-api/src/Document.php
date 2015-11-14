@@ -13,93 +13,117 @@ namespace Tobscure\JsonApi;
 
 use JsonSerializable;
 
-/**
- * This is the document class.
- *
- * @author Toby Zerner <toby.zerner@gmail.com>
- */
 class Document implements JsonSerializable
 {
-    protected $links;
+    use LinksTrait;
+    use MetaTrait;
 
+    /**
+     * The included array.
+     *
+     * @var array
+     */
     protected $included = [];
 
-    protected $meta;
-
+    /**
+     * The errors array.
+     *
+     * @var array
+     */
     protected $errors;
 
+    /**
+     * The jsonapi array.
+     *
+     * @var array
+     */
+    protected $jsonapi;
+
+    /**
+     * The data object.
+     *
+     * @var ElementInterface
+     */
     protected $data;
 
-    public function addIncluded($link)
+    /**
+     * @param ElementInterface $data
+     */
+    public function __construct(ElementInterface $data = null)
     {
-        $resources = $link->getData()->getResources();
-        
-        foreach ($resources as $k => $resource) {
-            // If the resource doesn't have any attributes, then we don't need to
-            // put it into the included part of the document.
-            if (!$resource->getAttributes()) {
-                unset($resources[$k]);
-            } else {
-                foreach ($resource->getIncluded() as $link) {
-                    $this->addIncluded($link);
-                }
-            }
-        }
-
-        foreach ($resources as $k => $resource) {
-            foreach ($this->included as $includedResource) {
-                if ($includedResource->getType() === $resource->getType()
-                    && $includedResource->getId() === $resource->getId()) {
-                    $includedResource->merge($resource);
-                    unset($resources[$k]);
-                    break;
-                }
-            }
-        }
-
-        if ($resources) {
-            $this->included = array_merge($this->included, $resources);
-        }
-
-        return $this;
+        $this->data = $data;
     }
 
-    public function setData($element)
+    /**
+     * Get included resources.
+     *
+     * @param ElementInterface $element
+     * @param bool $includeParent
+     * @return Resource[]
+     */
+    protected function getIncluded(ElementInterface $element, $includeParent = false)
+    {
+        $included = [];
+
+        foreach ($element->getResources() as $resource) {
+            if ($includeParent) {
+                $included = $this->mergeResource($included, $resource);
+            }
+
+            foreach ($resource->getRelationships() as $relationship) {
+                $includedElement = $relationship->getData();
+
+                foreach ($this->getIncluded($includedElement, true) as $child) {
+                    $included = $this->mergeResource($included, $child);
+                }
+            }
+        }
+
+        return $included;
+    }
+
+    /**
+     * @param Resource[] $resources
+     * @param Resource $newResource
+     * @return Resource[]
+     */
+    protected function mergeResource(array $resources, Resource $newResource)
+    {
+        $type = $newResource->getType();
+        $id = $newResource->getId();
+
+        foreach ($resources as $resource) {
+            if ($resource->getType() === $type && $resource->getId() === $id) {
+                $resource->merge($newResource);
+
+                return $resources;
+            }
+        }
+
+        $resources[] = $newResource;
+
+        return $resources;
+    }
+
+    /**
+     * Set the data object.
+     *
+     * @param ElementInterface $element
+     * @return $this
+     */
+    public function setData(ElementInterface $element)
     {
         $this->data = $element;
 
-        if ($element) {
-            foreach ($element->getResources() as $resource) {
-                foreach ($resource->getIncluded() as $link) {
-                    $this->addIncluded($link);
-                }
-            }
-        }
-
         return $this;
     }
 
-    public function addLink($key, $value)
-    {
-        $this->links[$key] = $value;
-
-        return $this;
-    }
-
-    public function addMeta($key, $value)
-    {
-        $this->meta[$key] = $value;
-
-        return $this;
-    }
-
-    public function setMeta($meta)
-    {
-        $this->meta = $meta;
-
-        return $this;
-    }
-
+    /**
+     * Set the errors array.
+     *
+     * @param array $errors
+     * @return $this
+     */
     public function setErrors($errors)
     {
         $this->errors = $errors;
@@ -107,42 +131,74 @@ class Document implements JsonSerializable
         return $this;
     }
 
+    /**
+     * Set the jsonapi array.
+     *
+     * @param array $jsonapi
+     * @return $this
+     */
+    public function setJsonapi($jsonapi)
+    {
+        $this->jsonapi = $jsonapi;
+
+        return $this;
+    }
+
+    /**
+     * Map everything to arrays.
+     *
+     * @return array
+     */
     public function toArray()
     {
         $document = [];
 
-        if (!empty($this->links)) {
-            ksort($this->links);
+        if (! empty($this->links)) {
             $document['links'] = $this->links;
         }
 
-        if (!empty($this->data)) {
+        if (! empty($this->data)) {
             $document['data'] = $this->data->toArray();
-        }
 
-        if (!empty($this->included)) {
-            $document['included'] = [];
-            foreach ($this->included as $resource) {
-                $document['included'][] = $resource->toArray();
+            $resources = $this->getIncluded($this->data);
+
+            if (count($resources)) {
+                $document['included'] = array_map(function (Resource $resource) {
+                    return $resource->toArray();
+                }, $resources);
             }
         }
 
-        if (!empty($this->meta)) {
+        if (! empty($this->meta)) {
             $document['meta'] = $this->meta;
         }
 
-        if (!empty($this->errors)) {
+        if (! empty($this->errors)) {
             $document['errors'] = $this->errors;
+        }
+
+        if (! empty($this->jsonapi)) {
+            $document['jsonapi'] = $this->jsonapi;
         }
 
         return $document;
     }
 
+    /**
+     * Map to string.
+     *
+     * @return string
+     */
     public function __toString()
     {
         return json_encode($this->toArray());
     }
 
+    /**
+     * Serialize for JSON usage.
+     *
+     * @return array
+     */
     public function jsonSerialize()
     {
         return $this->toArray();

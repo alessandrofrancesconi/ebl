@@ -4,7 +4,7 @@ class TagSerializer extends Tobscure\JsonApi\AbstractSerializer
 {
     protected $type = 'tag';
         
-    protected function getAttributes($tag)
+    public function getAttributes($tag, array $fields = null)
     {
         return [
             //'name' => $tag->name TODO?

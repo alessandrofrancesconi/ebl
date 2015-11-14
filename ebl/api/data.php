@@ -2,20 +2,28 @@
 
 require ("EblApi.php");
 
-require ("../libs/json-api/src/Elements/ElementInterface.php");
-require ("../libs/json-api/src/Elements/AbstractElement.php");
-require ("../libs/json-api/src/Elements/Resource.php");
-require ("../libs/json-api/src/Elements/Collection.php");
+require ("../libs/json-api/src/Util.php");
+require ("../libs/json-api/src/LinksTrait.php");
+require ("../libs/json-api/src/MetaTrait.php");
+
+require ("../libs/json-api/src/ElementInterface.php");
+require ("../libs/json-api/src/Resource.php");
+require ("../libs/json-api/src/Collection.php");
 
 require ("../libs/json-api/src/Document.php");
 require ("../libs/json-api/src/Relationship.php");
-require ("../libs/json-api/src/Criteria.php");
+require ("../libs/json-api/src/Parameters.php");
 require ("../libs/json-api/src/SerializerInterface.php");
 require ("../libs/json-api/src/AbstractSerializer.php");
 
 require ("serializers/ResultSerializer.php");
 require ("serializers/SessionSerializer.php");
 require ("serializers/PostSerializer.php");
+
+use Tobscure\JsonApi\Document;
+use Tobscure\JsonApi\Collection;
+use Tobscure\JsonApi\Resource;
+use Tobscure\JsonApi\Parameters;
 
 class DataApi extends EblApi {
     
@@ -26,11 +34,11 @@ class DataApi extends EblApi {
     }
 
     public function processAction($args) {
-        $document = new Tobscure\JsonApi\Document();
+        $document = new Document();
         $element = null;
         $meta = array();
         
-        $criteria = new Tobscure\JsonApi\Criteria($_GET);        
+        $parameters = new Parameters($_GET);        
         
         try {
         switch($args['action']) {
@@ -38,65 +46,65 @@ class DataApi extends EblApi {
             case "init_repository":
                 $this->initRepository($args['psw']);
                 $session = $this->getSession();
-                $element = (new SessionSerializer())->resource($session);
+                $element = (new Resource($session, new SessionSerializer));
                 break;
                 
             case "log_in":
                 $this->logIn($args['psw']);
                 $session = $this->getSession();
-                $element = (new SessionSerializer())->resource($session);
+                $element = (new Resource($session, new SessionSerializer));
                 break;
                          
             case "log_out":
                 $this->logOut();
                 $session = $this->getSession();
-                $element = (new SessionSerializer())->resource($session);
+                $element = (new Resource($session, new SessionSerializer));
                 break;
                 
             case "get_session":
                 $session = $this->getSession();
-                $element = (new SessionSerializer())->resource($session);
+                $element = (new Resource($session, new SessionSerializer));
                 break;
                 
             case "get_post":
                 $postId = (isset($args['id']) ? $args['id'] : null);
                 
                 $post = $this->getPost($postId);
-                $element = (new PostSerializer(['tags']))->resource($post);
+                $element = (new Resource($post, new PostSerializer))->fields(['tags']);
                 break;
                 
             case "get_posts":                
-                $sort = $criteria->getSort();
+                $sort = $parameters->getSort();
                 if ($sort == null) $sort = array();
                 
-                $limit = $criteria->getLimit();
+                $limit = $parameters->getLimit();
                 if ($limit == null) $limit = -1;
                 
-                $offset = $criteria->getOffset();
+                $offset = $parameters->getOffset();
                 if ($offset == null) $offset = 0;
                 
                 $posts = $this->getPosts($sort, $limit, $offset);
-                $element = (new PostSerializer(['tags']))->collection($posts);
+                $element = (new Collection($posts, new PostSerializer))->fields(['tags']);
                 break;
             
             case "publish_post":
                 $id = $this->publishPost($args['title'], $args['body'], $args['tags'], $args['draft'], $args['token']);
                 
-                $element = (new ResultSerializer())->resource(new stdClass());
+                $element = (new Resource(new stdClass(), new ResultSerializer));
                 $document->addMeta("id", $id);
                 break;
             
             case "update_post":
                 $id = $this->updatePost($args['id'], $args['title'], $args['body'], $args['tags'], $args['draft'], $args['token']);
                 
-                $element = (new ResultSerializer())->resource(new stdClass());
+                $element = (new Resource(new stdClass(), new ResultSerializer));
                 $document->addMeta("id", $id);
                 break;
                 
             case "delete_post":
                 $this->deletePost($args['id'], $args['token']);
                 
-                $element = (new ResultSerializer())->resource(new stdClass());
+                $element = (new Resource(new stdClass(), new ResultSerializer));
                 break;
                 
             default: 
@@ -112,7 +120,7 @@ class DataApi extends EblApi {
         }
         
         $document->setData($element);
-        echo json_encode($document->toArray(), version_compare(phpversion(), '5.4.0', '>=') ? JSON_PRETTY_PRINT : 0);
+        echo json_encode($document->toArray());
     }
     
     private function initRepository($password) {

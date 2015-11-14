@@ -11,189 +11,57 @@
 
 namespace Tobscure\JsonApi;
 
-use Tobscure\JsonApi\Elements\Collection;
-use Tobscure\JsonApi\Elements\Resource;
+use LogicException;
 
-/**
- * This is the abstract serializer class.
- *
- * @author Toby Zerner <toby.zerner@gmail.com>
- */
 abstract class AbstractSerializer implements SerializerInterface
 {
     /**
+     * The type.
+     *
      * @var string
      */
     protected $type;
 
     /**
-     * @var array|null
+     * {@inheritdoc}
      */
-    protected $link;
-
-    /**
-     * @var array|null
-     */
-    protected $include;
-
-    /**
-     * @param array|null $include
-     * @param array|null $link
-     */
-    public function __construct(array $include = [], array $link = [])
+    public function getType($model)
     {
-        $this->include = $include;
-        $this->link = $link;
+        return $this->type;
     }
 
     /**
-     * @param $model
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    abstract protected function getAttributes($model);
-
-    /**
-     * @param $model
-     *
-     * @return mixed
-     */
-    protected function getId($model)
+    public function getId($model)
     {
         return $model->id;
     }
 
     /**
-     * @param $include
+     * {@inheritdoc}
      */
-    public function setInclude($include)
+    public function getAttributes($model, array $fields = null)
     {
-        $this->include = $include;
+        return [];
     }
 
     /**
-     * @param $link
-     */
-    public function setLink($link)
-    {
-        $this->link = $link;
-    }
-
-    /**
-     * @param $data
+     * {@inheritdoc}
      *
-     * @return Collection|null
+     * @throws LogicException
      */
-    public function collection($data)
-    {
-        if (empty($data)) {
-            return;
-        }
-
-        $resources = [];
-
-        foreach ($data as $record) {
-            $resources[] = $this->resource($record);
-        }
-        
-        return new Collection($this->type, $resources);
-    }
-
-    /**
-     * @param object|array $data
-     *
-     * @return Resource|null
-     */
-    public function resource($data)
-    {
-        if (empty($data)) {
-            return;
-        }
-
-        if (!is_object($data)) {
-            return new Resource($this->type, $data);
-        }
-
-        $included = $links = [];
-
-        $relationships = [
-            'link' => $this->parseRelationshipPaths($this->link),
-            'include' => $this->parseRelationshipPaths($this->include),
-        ];
-
-        foreach (['link', 'include'] as $type) {
-            $include = $type === 'include';
-
-            foreach ($relationships[$type] as $name => $nested) {
-                $method = $this->getRelationshipFromMethod($name);
-
-                if ($method) {
-                    $element = $method(
-                        $data,
-                        $include,
-                        isset($relationships['include'][$name]) ? $relationships['include'][$name] : [],
-                        isset($relationships['link'][$name]) ? $relationships['link'][$name] : []
-                    );
-                }
-
-                if ($method && $element) {
-                    if (!($element instanceof Relationship)) {
-                        $element = new Relationship($element);
-                    }
-                    if ($include) {
-                        $included[$name] = $element;
-                    } else {
-                        $links[$name] = $element;
-                    }
-                }
-            }
-        }
-
-        return new Resource($this->type, $this->getId($data), $this->getAttributes($data), $links, $included);
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
-    protected function getRelationshipFromMethod($name)
+    public function getRelationship($model, $name)
     {
         if (method_exists($this, $name)) {
-            return $this->$name();
-        }
-    }
+            $relationship = $this->$name($model);
 
-    /**
-     * Given a flat array of relationship paths like:.
-     *
-     *     ['user', 'user.employer', 'user.employer.country', 'comments']
-     *
-     * ... create a nested array of relationship paths one-level deep that can
-     * be passed on to other serializers:
-     *
-     *     ['user' => ['employer', 'employer.country'], 'comments' => []]
-     *
-     * @param array $paths
-     *
-     * @return array
-     */
-    protected function parseRelationshipPaths(array $paths)
-    {
-        $tree = [];
-
-        foreach ($paths as $path) {
-            list($primary, $nested) = array_pad(explode('.', $path, 2), 2, null);
-
-            if (!isset($tree[$primary])) {
-                $tree[$primary] = [];
+            if ($relationship !== null && ! ($relationship instanceof Relationship)) {
+                throw new LogicException('Relationship method must return null or an instance of '
+                    .Relationship::class);
             }
 
-            if ($nested) {
-                $tree[$primary][] = $nested;
-            }
+            return $relationship;
         }
-
-        return $tree;
     }
 }

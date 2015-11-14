@@ -4,12 +4,12 @@ class SessionSerializer extends Tobscure\JsonApi\AbstractSerializer
 {
     protected $type = 'session';
     
-    protected function getId($session)
+    public function getId($session)
     {
         return "_session";
     }
     
-    protected function getAttributes($session)
+    public function getAttributes($session, array $fields = null)
     {
         return [
             'logged'    => $session->logged,

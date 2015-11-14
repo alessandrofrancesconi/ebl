@@ -1,8 +1,14 @@
 # PHP JSON-API
 
+[![Build Status](https://img.shields.io/travis/tobscure/json-api/master.svg?style=flat)](https://travis-ci.org/tobscure/json-api)
+[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/tobscure/json-api.svg?style=flat)](https://scrutinizer-ci.com/g/tobscure/json-api/code-structure)
+[![Quality Score](https://img.shields.io/scrutinizer/g/tobscure/json-api.svg?style=flat)](https://scrutinizer-ci.com/g/tobscure/json-api)
+[![Pre Release](https://img.shields.io/packagist/vpre/tobscure/json-api.svg?style=flat)](https://github.com/tobscure/json-api/releases)
+[![License](https://img.shields.io/packagist/l/tobscure/json-api.svg?style=flat)](https://packagist.org/packages/tobscure/json-api)
+
 [JSON-API](http://jsonapi.org) responses in PHP.
 
-Works with version 1.0 RC3 of the spec.
+Works with version 1.0 of the spec.
 
 ## Install
 
@@ -16,42 +22,45 @@ composer require tobscure/json-api
 
 ```php
 use Tobscure\JsonApi\Document;
+use Tobscure\JsonApi\Collection;
 
-// Create a new JSON API Document
-$document = new Document();
+// Create a new collection of posts, and specify relationships to be included.
+$collection = (new Collection($posts, new PostSerializer))
+    ->with(['author', 'comments']);
 
-// Create a new serializer (see below), passing an array of 
-// relationships to include
-$serializer = new PostSerializer(['author', 'comments']);
+// Create a new JSON-API document with that collection as the data.
+$document = new Document($collection);
 
-// Create a new collection object using the serializer
-$collection = $serializer->collection($posts);
-
-// Set that collection as the document's data
-$document->setData($collection);
-
-// Add metadata and links
+// Add metadata and links.
 $document->addMeta('total', count($posts));
-$document->addLink('next', 'http://example.com/posts?page[offset]=2');
+$document->addLink('self', 'http://example.com/api/posts');
 
-// Get the document as an array and output it as JSON
-echo json_encode($document->toArray());
+// Output the document as JSON.
+echo json_encode($document);
 ```
 
 ### Elements
 
 The JSON-API spec describes *resource objects* as objects containing information about a single resource, and *collection objects* as objects containing information about many resources. In this package:
 
-- `Tobscure\JsonApi\Elements\Resource` represents a *resource object*
-- `Tobscure\JsonApi\Elements\Collection` represents a *collection object*
+- `Tobscure\JsonApi\Resource` represents a *resource object*
+- `Tobscure\JsonApi\Collection` represents a *collection object*
 
-Both Resources and Collections are termed as *Elements*. In conceptually the same way that the JSON-API spec describes, a Resource may **link** to any number of other Elements (Resource for has-one relationships, Collection for has-many). Similarly, a Collection may contain many Resources.
+Both Resources and Collections are termed as *Elements*. In conceptually the same way that the JSON-API spec describes, a Resource may have **relationships** with any number of other Elements (Resource for has-one relationships, Collection for has-many). Similarly, a Collection may contain many Resources.
 
-A JSON-API Document may contain one primary Element. The primary Element will be recursively parsed for **links** to other Elements; these Elements will be added to the Document as **included** resources.
+A JSON-API Document may contain one primary Element. The primary Element will be recursively parsed for relationships with other Elements; these Elements will be added to the Document as **included** resources.
+
+#### Sparse Fieldsets
+
+You can specify which fields (attributes and relationships) to be included on an Element using the `fields` method. You must provide a multidimensional array organized by resource type:
+
+```php
+$collection->fields(['posts' => ['title', 'date']]);
+```
 
 ### Serializers
 
-A Serializer is responsible for constructing Element (Resource/Collection) objects for a certain resource type. Serializers should extend `Tobscure\JsonApi\AbstractSerializer`. At a minimum, a serializer must specify its **type** and provide a method to transform **attributes**:
+A Serializer is responsible for building attributes and relationships for a certain resource type. Serializers must implement `Tobscure\JsonApi\SerializerInterface`. An `AbstractSerializer` is provided with some basic functionality. At a minimum, a serializer must specify its **type** and provide a method to transform **attributes**:
 
 ```php
 use Tobscure\JsonApi\AbstractSerializer;
@@ -60,11 +69,12 @@ class PostSerializer extends AbstractSerializer
 {
     protected $type = 'posts';
 
-    protected function getAttributes($post)
+    protected function getAttributes($post, array $fields = [])
     {
         return [
             'title' => $post->title,
             'body'  => $post->body,
+            'date'  => $post->date
         ];
     }
 }
@@ -81,49 +91,131 @@ protected function getId($post)
 
 #### Relationships 
 
-A Serializer should have a method for each relationship that can be linked or included on a resource. This method should return a Closure which accepts four arguments:
-
-- `$model` (object) The parent model that is being serialized
-- `$include` (boolean) Whether or not this relationship's resource(s) are being included, or just linked
-- `$included` (array) The relationships that are to be included on this resource
-- `$linked` (array) The relationships that are to be linked on this resource
-
-The Closure should return a `Tobscure\JsonApi\Relationship` object, which represents a **relationship object**. When all of this is put together, it might look something like this:
+The `AbstractSerializer` allows you to define a public method for each relationship that exists for a resource. A relationship method should return a `Tobscure\JsonApi\Relationship` instance.
 
 ```php
-protected function comments()
+public function comments($post)
 {
-    return function ($post, $include, array $included, array $linked) {
-        $serializer = new CommentSerializer($included, $linked);
-        $comments = $serializer->collection($include ? $post->comments : $post->commentIds);
+    $element = new Collection($post->comments, new CommentSerializer);
 
-        $relationship = new Relationship($comments);
-        $relationship->setMeta('key', 'value');
-
-        return $relationship;
-    };
+    return new Relationship($element);
 }
 ```
 
-When a Serializer is instantiated, a list of relationships to **include** may be passed as the first constructor argument. (In the case of the primary Element's serializer, you will probably want this to be the exploded value of the ?include query param.) A list of relationships to **link** may be passed as the second constructor argument.
+### Meta & Links
 
-### Criteria
+The `Document`, `Resource`, and `Relationship` classes allow you to add meta information:
 
 ```php
-use Tobscure\JsonApi\Criteria;
+$document = new Document;
+$document->addMeta('key', 'value');
+$document->setMeta(['key' => 'value']);
+```
 
-$criteria = new Criteria($_GET);
+They also allow you to add links in a similar way:
 
-$include = $criteria->getInclude(); // ?include=foo,bar => ['foo', 'bar']
+```php
+$resource = new Resource;
+$resource->addLink('self', 'url');
+$resource->setLinks(['key' => 'value']);
+```
 
-$sort = $criteria->getSort(); // ?sort=+foo,-bar => ['foo' => 'asc', 'bar' => 'desc']
+You can also easily add pagination links:
 
-$offset = $criteria->getOffset(); // ?page[offset]=10 => 10 (defaults to 0)
+```php
+$document->addPaginationLinks(
+    'url', // The base URL for the links
+    [],    // The query params provided in the request
+    40,    // The current offset
+    20,    // The current limit
+    100    // The total number of results
+);
+```
 
-$limit = $criteria->getLimit();  // ?page[limit]=50 => 50 (defaults to null)
+### Parameters
+
+The `Tobscure\JsonApi\Parameters` class allows you to easily parse and validate query parameters in accordance with the specification.
+
+```php
+use Tobscure\JsonApi\Parameters;
+
+$parameters = new Parameters($_GET);
+```
+
+#### getInclude
+
+Get the relationships requested for inclusion. Provide an array of available relationship paths; if anything else is present, an `InvalidParameterException` will be thrown.
+
+```php
+// GET /api?include=author,comments
+$include = $parameters->getInclude(['author', 'comments', 'comments.author']); // ['author', 'comments']
+```
+
+#### getFields
+
+Get the fields requested for inclusion, keyed by resource type.
+
+```php
+// GET /api?fields[articles]=title,body
+$fields = $parameters->getFields(); // ['articles' => ['title', 'body']]
+```
+
+#### getSort
+
+Get the requested sort criteria. Provide an array of available fields that can be sorted by; if anything else is present, an `InvalidParameterException` will be thrown.
+
+```php
+// GET /api?sort=-created,title
+$sort = $parameters->getSort(['title', 'created']); // ['created' => 'desc', 'title' => 'asc']
+```
+
+#### getLimit and getOffset
+
+Get the offset number and the number of resources to display using a page- or offset-based strategy. `getLimit` accepts an optional maximum. If the calculated offset is below zero, an `InvalidParameterException` will be thrown.
+
+```php
+// GET /api?page[number]=5&page[size]=20
+$limit = $parameters->getLimit(100); // 20
+$offset = $parameters->getOffset($limit); // 80
+
+// GET /api?page[offset]=20&page[limit]=200
+$limit = $parameters->getLimit(100); // 100
+$offset = $parameters->getOffset(); // 20
+```
+
+### Error Handling
+
+You can transform caught exceptions into JSON-API error documents using the `Tobscure\JsonApi\ErrorHandler` class. You must register the appropriate `Tobscure\JsonApi\Exception\Handler\ExceptionHandlerInterface` instances.
+
+```php
+try {
+    // API handling code
+} catch (Exception $e) {
+    $errors = new ErrorHandler;
+
+    $errors->registerHandler(new InvalidParameterExceptionHandler);
+    $errors->registerHandler(new FallbackExceptionHandler);
+
+    $response = $errors->handle($e);
+
+    $document = new Document;
+    $document->setErrors($response->getErrors());
+
+    return new JsonResponse($document, $response->getStatus());
+}
+```
+
+## Contributing
+
+Feel free to send pull requests or create issues if you come across problems or have great ideas. Any input is appreciated!
+
+### Running Tests
+
+```bash
+$ phpunit
 ```
 
 ## License
 
-PHP JSON-API is licensed under [The MIT License (MIT)](LICENSE).
+This code is published under the [The MIT License](LICENSE). This means you can do almost anything with it, as long as the copyright notice and the accompanying license file is left intact.
 

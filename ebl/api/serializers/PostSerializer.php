@@ -6,7 +6,7 @@ class PostSerializer extends Tobscure\JsonApi\AbstractSerializer
 {
     protected $type = 'post';
         
-    protected function getAttributes($post)
+    public function getAttributes($post, array $fields = null)
     {
         return [
             'title'         => $post->title,

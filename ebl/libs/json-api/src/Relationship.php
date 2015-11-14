@@ -11,24 +11,21 @@
 
 namespace Tobscure\JsonApi;
 
-use Tobscure\JsonApi\Elements\ElementInterface;
-
-/**
- * This is the relationship class.
- *
- * @author Toby Zerner <toby.zerner@gmail.com>
- */
 class Relationship
 {
-    protected $data;
-
-    protected $self;
-
-    protected $related;
-
-    protected $meta;
+    use LinksTrait;
+    use MetaTrait;
 
     /**
+     * The data object.
+     *
+     * @var ElementInterface
+     */
+    protected $data;
+
+    /**
+     * Create a new relationship.
+     *
      * @param ElementInterface $data
      */
     public function __construct(ElementInterface $data)
@@ -36,11 +33,22 @@ class Relationship
         $this->data = $data;
     }
 
+    /**
+     * Get the data object.
+     *
+     * @return ElementInterface
+     */
     public function getData()
     {
         return $this->data;
     }
 
+    /**
+     * Set the data object.
+     *
+     * @param ElementInterface $data
+     * @return $this
+     */
     public function setData($data)
     {
         $this->data = $data;
@@ -48,54 +56,27 @@ class Relationship
         return $this;
     }
 
-    public function addMeta($key, $value)
-    {
-        $this->meta[$key] = $value;
-
-        return $this;
-    }
-
-    public function setMeta($meta)
-    {
-        $this->meta = $meta;
-
-        return $this;
-    }
-
-    public function setSelf($self)
-    {
-        $this->self = $self;
-
-        return $this;
-    }
-
-    public function setRelated($related)
-    {
-        $this->related = $related;
-
-        return $this;
-    }
-
+    /**
+     * Map everything to an array.
+     *
+     * @return array
+     */
     public function toArray()
     {
-        $link = [];
+        $array = [];
 
-        if (!empty($this->data)) {
-            $link['data'] = $this->data->toArray(false);
+        if (! empty($this->data)) {
+            $array['data'] = $this->data->toIdentifier();
         }
 
-        if (!empty($this->self)) {
-            $link['self'] = $this->self;
+        if (! empty($this->meta)) {
+            $array['meta'] = $this->meta;
         }
 
-        if (!empty($this->related)) {
-            $link['related'] = $this->related;
+        if (! empty($this->links)) {
+            $array['links'] = $this->links;
         }
 
-        if (!empty($this->meta)) {
-            $link['meta'] = $this->meta;
-        }
-
-        return $link;
+        return $array;
     }
 }
