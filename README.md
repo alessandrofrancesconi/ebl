@@ -19,7 +19,7 @@ Ebl, despite being very light, comes with several advantages compared with other
 
 Requirements
 ------------
-Ebl is conceived to run on a PHP 5.3+ server and it's compatible with IE 8+, Firefox 29+, Safari 4+, Chrome.
+Ebl is conceived to run on a PHP 5.4+ server and it's compatible with IE 8+, Firefox 29+, Safari 4+, Chrome.
 
 Usage
 -----
@@ -63,3 +63,8 @@ Ebl whould be nothing without the help of some cool libraries:
 * [Smarty](http://www.smarty.net/), a fast and simple PHP template engine
 * [wysihtml](http://wysihtml.com/), the typewriter for the modern web
 * [AlertifyJS](http://alertifyjs.com/), for beautiful web dialogs
+
+License
+-------
+
+Ebl is published under the [MIT License](https://opensource.org/licenses/MIT).

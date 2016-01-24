@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Ebl: the embeddable blog platform
+ * Licensed under the MIT license
+ */
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
