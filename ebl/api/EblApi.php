@@ -69,7 +69,6 @@ abstract class EblApi {
     
     protected function verifyAdminData($expectedCount) {
         $this->initDb();
-        
         $adminData = $this->repo->query()
             ->where('type', '===', "adminData")
             ->execute();

@@ -135,7 +135,7 @@ function buildTitleToolbar() {
     var tags = createButton('ebl-action-title-tag', eblLang.title_toolbar_tags);
     addClass(tags, 'fa', 'ebl-icon-tags');
     tags.onmousedown = function() {
-        showTagsDialog(parseTagsFromArray(lState.post.tags), function (newTags) {
+        showTagsDialog(printTagsFromArray(lState.post.tags), function (newTags) {
             lState.post.tags = parseTagsFromString(newTags);
         });
     };

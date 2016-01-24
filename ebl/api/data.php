@@ -35,10 +35,8 @@ class DataApi extends EblApi {
 
     public function processAction($args) {
         $document = new Document();
-        $element = null;
+        $element = NULL;
         $meta = array();
-        
-        $parameters = new Parameters($_GET);        
         
         try {
         switch($args['action']) {
@@ -67,21 +65,22 @@ class DataApi extends EblApi {
                 break;
                 
             case "get_post":
-                $postId = (isset($args['id']) ? $args['id'] : null);
+                $postId = (isset($args['id']) ? $args['id'] : NULL);
                 
                 $post = $this->getPost($postId);
                 $element = (new Resource($post, new PostSerializer))->fields(['tags']);
                 break;
                 
-            case "get_posts":                
+            case "get_posts":               
+                $parameters = new Parameters($args);     
                 $sort = $parameters->getSort();
-                if ($sort == null) $sort = array();
+                if ($sort == NULL) $sort = array();
                 
                 $limit = $parameters->getLimit();
-                if ($limit == null) $limit = -1;
+                if ($limit == NULL) $limit = -1;
                 
                 $offset = $parameters->getOffset();
-                if ($offset == null) $offset = 0;
+                if ($offset == NULL) $offset = 0;
                 
                 $posts = $this->getPosts($sort, $limit, $offset);
                 $element = (new Collection($posts, new PostSerializer))->fields(['tags']);
@@ -119,7 +118,7 @@ class DataApi extends EblApi {
             )));
         }
         
-        $document->setData($element);
+        if ($element != NULL)$document->setData($element);
         echo json_encode($document->toArray());
     }
     
@@ -188,7 +187,7 @@ class DataApi extends EblApi {
         
         $session = new stdClass();
         $session->logged = $this->getLoggedState();
-        $session->token = ($session->logged === true ? $_SESSION['ebl_token'] : null);
+        $session->token = ($session->logged === true ? $_SESSION['ebl_token'] : NULL);
         
         return $session;
     }
@@ -299,7 +298,7 @@ class DataApi extends EblApi {
             ->execute();
         
         if ($res->count() == 0) {
-            throw new DatabaseException("update failed: can't find document ". $postId, self::EBL_ERROR_NOTFOUND);
+            throw new DatabaseException("update failed, can't find document ". $postId, self::EBL_ERROR_NOTFOUND .".");
         }
         
         $doc = $res->first();

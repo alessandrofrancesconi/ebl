@@ -81,7 +81,11 @@ function parseTagsFromString(str) {
     var tagSplit = str.split(',');    
     var ids = [];
     for (var i = 0; i < tagSplit.length; ++i) {
-        var t = { id : tagSplit[i].trim() };
+        var clean = tagSplit[i].trim();
+        clean = clean.replace(/ +(?= )/g, '');
+        clean = clean.replace(/ /g, '-');
+        
+        var t = { id : clean };
         if (t.id.length > 0 && ids.indexOf(t.id) == -1) {
             out.push(t);
             ids.push(t.id);
@@ -90,7 +94,7 @@ function parseTagsFromString(str) {
     return out;
 }
 
-function parseTagsFromArray(arr) {
+function printTagsFromArray(arr) {
     var out = "";
     if (isNullOrUndef(arr)) return out;
     

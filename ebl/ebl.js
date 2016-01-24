@@ -7,7 +7,7 @@
  *
  * Author: Alessandro Francesconi (http://www.alessandrofrancesconi.it/)
  *
- * Copyright (C) 2015 Alessandro Francesconi
+ * Copyright (C) 2016 Alessandro Francesconi
  * Licensed under the GPL-3.0 license
  *
  */
@@ -720,7 +720,11 @@ function parseTagsFromString(str) {
     var tagSplit = str.split(',');    
     var ids = [];
     for (var i = 0; i < tagSplit.length; ++i) {
-        var t = { id : tagSplit[i].trim() };
+        var clean = tagSplit[i].trim();
+        clean = clean.replace(/ +(?= )/g, '');
+        clean = clean.replace(/ /g, '-');
+        
+        var t = { id : clean };
         if (t.id.length > 0 && ids.indexOf(t.id) == -1) {
             out.push(t);
             ids.push(t.id);
@@ -729,7 +733,7 @@ function parseTagsFromString(str) {
     return out;
 }
 
-function parseTagsFromArray(arr) {
+function printTagsFromArray(arr) {
     var out = "";
     if (isNullOrUndef(arr)) return out;
     
@@ -2124,7 +2128,7 @@ function buildTitleToolbar() {
     var tags = createButton('ebl-action-title-tag', eblLang.title_toolbar_tags);
     addClass(tags, 'fa', 'ebl-icon-tags');
     tags.onmousedown = function() {
-        showTagsDialog(parseTagsFromArray(lState.post.tags), function (newTags) {
+        showTagsDialog(printTagsFromArray(lState.post.tags), function (newTags) {
             lState.post.tags = parseTagsFromString(newTags);
         });
     };
