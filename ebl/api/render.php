@@ -1,7 +1,7 @@
 <?php
 
 require ("EblApi.php");
-require ("../libs/smarty/Smarty/Smarty.class.php");
+require ("../libs/Smarty/Smarty/Smarty.class.php");
 
 class RenderApi extends EblApi {
     

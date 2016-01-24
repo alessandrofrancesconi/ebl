@@ -4,17 +4,17 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 require ("utils.php");
-require ("../libs/flywheel/Flywheel/Formatter/FormatInterface.php");
-require ("../libs/flywheel/Flywheel/Formatter/JSON.php");
-require ("../libs/flywheel/Flywheel/Config.php");
-require ("../libs/flywheel/Flywheel/Repository.php");
-require ("../libs/flywheel/Flywheel/DocumentInterface.php");
-require ("../libs/flywheel/Flywheel/Document.php");
-require ("../libs/flywheel/Flywheel/Query.php");
-require ("../libs/flywheel/Flywheel/QueryWhere.php");
-require ("../libs/flywheel/Flywheel/QueryFilter.php");
-require ("../libs/flywheel/Flywheel/CachedQuery.php");
-require ("../libs/flywheel/Flywheel/Result.php");
+require ("../libs/Flywheel/Flywheel/Formatter/FormatInterface.php");
+require ("../libs/Flywheel/Flywheel/Formatter/JSON.php");
+require ("../libs/Flywheel/Flywheel/Config.php");
+require ("../libs/Flywheel/Flywheel/Repository.php");
+require ("../libs/Flywheel/Flywheel/DocumentInterface.php");
+require ("../libs/Flywheel/Flywheel/Document.php");
+require ("../libs/Flywheel/Flywheel/Query.php");
+require ("../libs/Flywheel/Flywheel/QueryWhere.php");
+require ("../libs/Flywheel/Flywheel/QueryFilter.php");
+require ("../libs/Flywheel/Flywheel/CachedQuery.php");
+require ("../libs/Flywheel/Flywheel/Result.php");
 
 
 abstract class EblApi {
