@@ -152,7 +152,7 @@ class DataApi extends EblApi {
         // try to prevent brute-force login (with simplicity)
         $now = time();
         $lastAccess = strtotime($adminData->lastAccess);
-        if ($now - $lastAccess <= 3) {
+        if ($now - $lastAccess < 3) {
             throw new SessionException("too many attempts in a short time. retry.", self::EBL_ERROR_AUTH_SHORTACCESS);
         }
         
