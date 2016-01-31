@@ -171,16 +171,16 @@ function initEditors() {
         
         var buttonHtml = editorToolbar.querySelector('.ebl-action-editor-html');
         if (isHtml) {
-            removeClass(buttonHtml, 'ebl-icon-file-code-o');
-            addClass(buttonHtml, 'ebl-icon-file-text-o', 'ebl-icon-2x');
+            removeClass(buttonHtml, 'ebl-icon-file-code');
+            addClass(buttonHtml, 'ebl-icon-file-text', 'ebl-icon-2x');
             buttonHtml.title = eblLang.editor_toolbar_closeHTML;
             showElement(buttonHtml);
             
             addClass(editorToolbar, 'ebl-sticky');
         }
         else {
-            removeClass(buttonHtml, 'ebl-icon-file-text-o', 'ebl-icon-2x');
-            addClass(buttonHtml, 'ebl-icon-file-code-o');
+            removeClass(buttonHtml, 'ebl-icon-file-text', 'ebl-icon-2x');
+            addClass(buttonHtml, 'ebl-icon-file-code');
             buttonHtml.title = eblLang.editor_toolbar_editHTML;
             
             removeClass(editorToolbar, 'ebl-sticky');

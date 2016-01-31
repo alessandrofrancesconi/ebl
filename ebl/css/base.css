@@ -301,72 +301,89 @@ pre.ebl-pre {
     font-size: 2em;
 }
 
+.ebl-icon-4x {
+    font-size: 4em;
+}
+
+.ebl-icon-spin {
+  -webkit-animation: fa-spin 2s infinite linear;
+  animation: fa-spin 2s infinite linear;
+}
+
+.ebl-icon-spin {
+    font-size: 2em;
+}
+
+.ebl-icon-gear:before {
+    content: "\f013";
+}
 .ebl-icon-calendar:before {
     content: "\f073";
 }
-.ebl-icon-trash-o:before {
-	content: "\f014";
+.ebl-icon-trash:before {
+    content: "\f014";
 }
-.ebl-icon-pencil-square-o:before {
-	content: "\f044";
+.ebl-icon-pencil-square:before {
+    content: "\f044";
 }
-.ebl-icon-file-text-o:before {
-	content: "\e600";
+.ebl-icon-file-text:before {
+    content: "\e600";
 }
 .ebl-icon-close:before {
-	content: "\f00d";
+    content: "\f00d";
 }
 .ebl-icon-bold:before {
-	content: "\f032";
+    content: "\f032";
 }
 .ebl-icon-italic:before {
-	content: "\f033";
+    content: "\f033";
 }
 .ebl-icon-align-left:before {
-	content: "\f036";
+    content: "\f036";
 }
 .ebl-icon-align-center:before {
-	content: "\f037";
+    content: "\f037";
 }
 .ebl-icon-align-right:before {
-	content: "\f038";
+    content: "\f038";
 }
 .ebl-icon-image:before {
-	content: "\f03e";
+    content: "\f03e";
 }
 .ebl-icon-sign-out:before {
-	content: "\f08b";
+    content: "\f08b";
 }
 .ebl-icon-chain:before {
-	content: "\f0c1";
+    content: "\f0c1";
 }
-.ebl-icon-floppy-o:before {
-	content: "\f0c7";
+.ebl-icon-floppy:before {
+    content: "\f0c7";
 }
 .ebl-icon-list-ul:before {
-	content: "\f0ca";
+    content: "\f0ca";
 }
 .ebl-icon-list-ol:before {
-	content: "\f0cb";
+    content: "\f0cb";
 }
 .ebl-icon-underline:before {
-	content: "\f0cd";
+    content: "\f0cd";
 }
 .ebl-icon-rotate-left:before {
-	content: "\f0e2";
+    content: "\f0e2";
 }
-.ebl-icon-cloud-upload:before {
-	content: "\f0ee";
+.ebl-icon-upload:before {
+    content: "\f0ee";
 }
-.ebl-icon-plus-square-o:before {
-	content: "\f196";
+.ebl-icon-plus-square:before {
+    content: "\f196";
 }
-.ebl-icon-file-code-o:before {
-	content: "\f1c9";
+.ebl-icon-file-code:before {
+    content: "\f1c9";
 }
 .ebl-icon-header:before {
-	content: "\f1dc";
+    content: "\f1dc";
 }
 .ebl-icon-tags:before {
-	content: "\f02c";
+    content: "\f02c";
 }
+

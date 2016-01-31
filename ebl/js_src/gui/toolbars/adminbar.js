@@ -11,7 +11,7 @@ function buildAdminBar () {
     addClass(newContainer, 'ebl-adminbar-new');
     
     var addNew = createButton('ebl-action-new');
-    addClass(addNew, 'fa', 'ebl-icon-2x', 'ebl-icon-plus-square-o');
+    addClass(addNew, 'ebl-icon-2x', 'ebl-icon-plus-square');
     addNew.onclick = function() {
         openCreateNew();
     };
@@ -25,7 +25,7 @@ function buildAdminBar () {
     addClass(editContainer, 'ebl-adminbar-edit');
     
     var editPost = createButton('ebl-action-edit');
-    addClass(editPost, 'fa', 'ebl-icon-2x', 'ebl-icon-pencil-square-o');
+    addClass(editPost, 'ebl-icon-2x', 'ebl-icon-pencil-square');
     editPost.onclick = function() {
         var newState = clone(lState);
         newState.post.edit = true;
@@ -37,7 +37,7 @@ function buildAdminBar () {
     };
     
     var deletePost = createButton('ebl-action-delete');
-    addClass(deletePost, 'fa', 'ebl-icon-2x', 'ebl-icon-trash-o');
+    addClass(deletePost, 'ebl-icon-2x', 'ebl-icon-trash');
     deletePost.onclick = function () {
         showDeleteDialog(lState.post.id);
     };
@@ -50,20 +50,20 @@ function buildAdminBar () {
     addClass(publishContainer, 'ebl-adminbar-publish');
     
     var saveDraft = createButton('ebl-action-save');
-    addClass(saveDraft, 'fa', 'ebl-icon-2x', 'ebl-icon-floppy-o');
+    addClass(saveDraft, 'ebl-icon-2x', 'ebl-icon-floppy');
     saveDraft.onclick = function () {
         if (lState.post.status == PostStatus.PUBLISHED) showReDraftDialog(function () { saveCurrentEditedPost(true); });
         else saveCurrentEditedPost(true);
     };
     
     var publishPost = createButton('ebl-action-publish');
-    addClass(publishPost, 'fa', 'ebl-icon-2x', 'ebl-icon-cloud-upload');
+    addClass(publishPost, 'ebl-icon-2x', 'ebl-icon-upload');
     publishPost.onclick = function () {
         saveCurrentEditedPost(false);
     };
     
     var cancelEdit = createButton('ebl-action-cancel');
-    addClass(cancelEdit, 'fa', 'ebl-icon-2x', 'ebl-icon-close');
+    addClass(cancelEdit, 'ebl-icon-2x', 'ebl-icon-close');
     cancelEdit.onclick = function () {
         unsetEditorMode(true);
         goHistoryBack();
@@ -75,7 +75,7 @@ function buildAdminBar () {
     
     // 'logout' button
     var logOut = createButton('ebl-action-logout');
-    addClass(logOut, 'fa', 'ebl-icon-2x', 'ebl-icon-sign-out');
+    addClass(logOut, 'ebl-icon-2x', 'ebl-icon-sign-out');
     logOut.onclick = function() {
         showLogoutDialog();
     };

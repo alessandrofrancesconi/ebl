@@ -5,7 +5,7 @@ function showLoadingOverlay() {
         overlay = document.createElement('div');
         addClass(overlay, 'ebl-loading-overlay', 'ebl-unselectable');
         var spinner = document.createElement('div');
-        addClass(spinner, 'fa', 'fa-cog', 'fa-spin', 'fa-4x');
+        addClass(spinner, 'ebl-icon-gear', 'ebl-icon-spin', 'ebl-icon-4x');
         
         overlay.appendChild(spinner);
         prependTo(c, overlay);

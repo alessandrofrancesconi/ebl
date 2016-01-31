@@ -1251,16 +1251,16 @@ function initEditors() {
         
         var buttonHtml = editorToolbar.querySelector('.ebl-action-editor-html');
         if (isHtml) {
-            removeClass(buttonHtml, 'ebl-icon-file-code-o');
-            addClass(buttonHtml, 'ebl-icon-file-text-o', 'ebl-icon-2x');
+            removeClass(buttonHtml, 'ebl-icon-file-code');
+            addClass(buttonHtml, 'ebl-icon-file-text', 'ebl-icon-2x');
             buttonHtml.title = eblLang.editor_toolbar_closeHTML;
             showElement(buttonHtml);
             
             addClass(editorToolbar, 'ebl-sticky');
         }
         else {
-            removeClass(buttonHtml, 'ebl-icon-file-text-o', 'ebl-icon-2x');
-            addClass(buttonHtml, 'ebl-icon-file-code-o');
+            removeClass(buttonHtml, 'ebl-icon-file-text', 'ebl-icon-2x');
+            addClass(buttonHtml, 'ebl-icon-file-code');
             buttonHtml.title = eblLang.editor_toolbar_editHTML;
             
             removeClass(editorToolbar, 'ebl-sticky');
@@ -1350,8 +1350,8 @@ function saveCurrentEditedPost(isDraft) {
     
     var publishAsNew = lState.post.status === PostStatus.NEW;
     var action = (publishAsNew ? 
-        'action=publish_post&title='+ title +'&body='+ content + '&tags=' + tags + '&draft=' + (isDraft ? 1 : 0) : 
-        'action=update_post&id='+ lState.post.id +'&title='+ title +'&body='+ content + '&tags=' + tags + '&draft=' + (isDraft ? 1 : 0)
+        'action=publish_post&title='+ title +'&body='+ content +'&tags='+ tags +'&draft='+ (isDraft ? 1 : 0) : 
+        'action=update_post&id='+ lState.post.id +'&title='+ title +'&body='+ content +'&tags='+ tags +'&draft='+ (isDraft ? 1 : 0)
     );
     action += '&token=' + gState.authToken;
     
@@ -1891,7 +1891,7 @@ function showLoadingOverlay() {
         overlay = document.createElement('div');
         addClass(overlay, 'ebl-loading-overlay', 'ebl-unselectable');
         var spinner = document.createElement('div');
-        addClass(spinner, 'fa', 'fa-cog', 'fa-spin', 'fa-4x');
+        addClass(spinner, 'ebl-icon-gear', 'ebl-icon-spin', 'ebl-icon-4x');
         
         overlay.appendChild(spinner);
         prependTo(c, overlay);
@@ -1941,7 +1941,7 @@ function buildAdminBar () {
     addClass(newContainer, 'ebl-adminbar-new');
     
     var addNew = createButton('ebl-action-new');
-    addClass(addNew, 'fa', 'ebl-icon-2x', 'ebl-icon-plus-square-o');
+    addClass(addNew, 'ebl-icon-2x', 'ebl-icon-plus-square');
     addNew.onclick = function() {
         openCreateNew();
     };
@@ -1955,7 +1955,7 @@ function buildAdminBar () {
     addClass(editContainer, 'ebl-adminbar-edit');
     
     var editPost = createButton('ebl-action-edit');
-    addClass(editPost, 'fa', 'ebl-icon-2x', 'ebl-icon-pencil-square-o');
+    addClass(editPost, 'ebl-icon-2x', 'ebl-icon-pencil-square');
     editPost.onclick = function() {
         var newState = clone(lState);
         newState.post.edit = true;
@@ -1967,7 +1967,7 @@ function buildAdminBar () {
     };
     
     var deletePost = createButton('ebl-action-delete');
-    addClass(deletePost, 'fa', 'ebl-icon-2x', 'ebl-icon-trash-o');
+    addClass(deletePost, 'ebl-icon-2x', 'ebl-icon-trash');
     deletePost.onclick = function () {
         showDeleteDialog(lState.post.id);
     };
@@ -1980,20 +1980,20 @@ function buildAdminBar () {
     addClass(publishContainer, 'ebl-adminbar-publish');
     
     var saveDraft = createButton('ebl-action-save');
-    addClass(saveDraft, 'fa', 'ebl-icon-2x', 'ebl-icon-floppy-o');
+    addClass(saveDraft, 'ebl-icon-2x', 'ebl-icon-floppy');
     saveDraft.onclick = function () {
         if (lState.post.status == PostStatus.PUBLISHED) showReDraftDialog(function () { saveCurrentEditedPost(true); });
         else saveCurrentEditedPost(true);
     };
     
     var publishPost = createButton('ebl-action-publish');
-    addClass(publishPost, 'fa', 'ebl-icon-2x', 'ebl-icon-cloud-upload');
+    addClass(publishPost, 'ebl-icon-2x', 'ebl-icon-upload');
     publishPost.onclick = function () {
         saveCurrentEditedPost(false);
     };
     
     var cancelEdit = createButton('ebl-action-cancel');
-    addClass(cancelEdit, 'fa', 'ebl-icon-2x', 'ebl-icon-close');
+    addClass(cancelEdit, 'ebl-icon-2x', 'ebl-icon-close');
     cancelEdit.onclick = function () {
         unsetEditorMode(true);
         goHistoryBack();
@@ -2005,7 +2005,7 @@ function buildAdminBar () {
     
     // 'logout' button
     var logOut = createButton('ebl-action-logout');
-    addClass(logOut, 'fa', 'ebl-icon-2x', 'ebl-icon-sign-out');
+    addClass(logOut, 'ebl-icon-2x', 'ebl-icon-sign-out');
     logOut.onclick = function() {
         showLogoutDialog();
     };
@@ -2052,56 +2052,56 @@ function buildEditorToolbar() {
     var format = document.createElement('div');
     
     var undo = createButton('ebl-action-editor-undo', eblLang.editor_toolbar_undo);
-    addClass(undo, 'fa', 'ebl-icon-rotate-left');
+    addClass(undo, 'ebl-icon-rotate-left');
     setDataAttribute(undo, 'wysihtml5Command', 'undo');
     
     var textBold = createButton('ebl-action-editor-bold', eblLang.editor_toolbar_textBold);
-    addClass(textBold, 'fa', 'ebl-icon-bold');
+    addClass(textBold, 'ebl-icon-bold');
     setDataAttribute(textBold, 'wysihtml5Command', 'bold');
     
     var textItalic = createButton('ebl-action-editor-italic', eblLang.editor_toolbar_textItalic);
-    addClass(textItalic, 'fa', 'ebl-icon-italic');
+    addClass(textItalic, 'ebl-icon-italic');
     setDataAttribute(textItalic, 'wysihtml5Command', 'italic');
     
     var textUnderline = createButton('ebl-action-editor-underline', eblLang.editor_toolbar_textUnderline);
-    addClass(textUnderline, 'fa', 'ebl-icon-underline');
+    addClass(textUnderline, 'ebl-icon-underline');
     setDataAttribute(textUnderline, 'wysihtml5Command', 'underline');
     
     var textH1 = createButton('ebl-action-editor-h1', eblLang.editor_toolbar_textH1);
-    addClass(textH1, 'fa', 'ebl-icon-header');
+    addClass(textH1, 'ebl-icon-header');
     setDataAttribute(textH1, 'wysihtml5Command', 'formatBlock');
     setDataAttribute(textH1, 'wysihtml5CommandValue', 'h1');
     
     var alignLeft = createButton('ebl-action-editor-alignleft', eblLang.editor_toolbar_textAlignLeft);
-    addClass(alignLeft, 'fa', 'ebl-icon-align-left');
+    addClass(alignLeft, 'ebl-icon-align-left');
     setDataAttribute(alignLeft, 'wysihtml5Command', 'justifyLeft');
     
     var alignCenter = createButton('ebl-action-editor-aligncenter', eblLang.editor_toolbar_textAlignCenter);
-    addClass(alignCenter, 'fa', 'ebl-icon-align-center');
+    addClass(alignCenter, 'ebl-icon-align-center');
     setDataAttribute(alignCenter, 'wysihtml5Command', 'justifyCenter');
     
     var alignRight = createButton('ebl-action-editor-alignright', eblLang.editor_toolbar_textAlignRight);
-    addClass(alignRight, 'fa', 'ebl-icon-align-right');
+    addClass(alignRight, 'ebl-icon-align-right');
     setDataAttribute(alignRight, 'wysihtml5Command', 'justifyRight');
     
     var addUl = createButton('ebl-action-editor-addul', eblLang.editor_toolbar_addUl);
-    addClass(addUl, 'fa', 'ebl-icon-list-ul');
+    addClass(addUl, 'ebl-icon-list-ul');
     setDataAttribute(addUl, 'wysihtml5Command', 'insertUnorderedList');
     
     var addOl = createButton('ebl-action-editor-addol', eblLang.editor_toolbar_addOl);
-    addClass(addOl, 'fa', 'ebl-icon-list-ol');
+    addClass(addOl, 'ebl-icon-list-ol');
     setDataAttribute(addOl, 'wysihtml5Command', 'insertOrderedList');
     
     var addImage = createButton('ebl-action-editor-addimage', eblLang.editor_toolbar_addImage);
-    addClass(addImage, 'fa', 'ebl-icon-image');
+    addClass(addImage, 'ebl-icon-image');
     setDataAttribute(addImage, 'wysihtml5Command', 'insertImage');
     
     var addLink = createButton('ebl-action-editor-addlink', eblLang.editor_toolbar_addLink);
-    addClass(addLink, 'fa', 'ebl-icon-chain');
+    addClass(addLink, 'ebl-icon-chain');
     setDataAttribute(addLink, 'wysihtml5Command', 'createLink');
     
     var showHtml = createButton('ebl-action-editor-html', eblLang.editor_toolbar_editHTML);
-    addClass(showHtml, 'fa', 'ebl-icon-file-code-o');
+    addClass(showHtml, 'ebl-icon-file-code');
     setDataAttribute(showHtml, 'wysihtml5Action', 'change_view');
     
     format.appendChild(undo);
@@ -2177,7 +2177,7 @@ function buildTitleToolbar() {
     addClass(bar, 'ebl-toolbar', 'ebl-title-toolbar');
     
     var tags = createButton('ebl-action-title-tag', eblLang.title_toolbar_tags);
-    addClass(tags, 'fa', 'ebl-icon-tags');
+    addClass(tags, 'ebl-icon-tags');
     tags.onmousedown = function() {
         showTagsDialog(printTagsFromArray(lState.post.tags), function (newTags) {
             lState.post.tags = parseTagsFromString(newTags);
