@@ -84,6 +84,7 @@ function parseTagsFromString(str) {
         var clean = tagSplit[i].trim();
         clean = clean.replace(/ +(?= )/g, '');
         clean = clean.replace(/ /g, '-');
+        clean = clean.toLowerCase();
         
         var t = { id : clean };
         if (t.id.length > 0 && ids.indexOf(t.id) == -1) {
@@ -100,7 +101,27 @@ function printTagsFromArray(arr) {
     
     for (var i = 0; i < arr.length; ++i) {
         out += arr[i].id;
-        if (i < arr.length - 1) out += ', ';
+        if (i < arr.length - 1) out += ", ";
     }
     return out;
+}
+
+/** Create a Date object from string in the form 'YYYY-MM-DDThh:mm:ss'
+ * @param {string} str - The formatted string
+ */
+function parseDatetimeFromString(str) {
+    var regex = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?:\:(\d{2}))?/;
+    var res = regex.exec(str); 
+    return new Date(
+        (+res[1]),
+        (+res[2])-1,
+        (+res[3]),
+        (+res[4]),
+        (+res[5]),
+        res[6] ? (+res[6]) : 0
+    );
+}
+
+function printDatetimeFromObj(date) {
+    return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "T" + date.getHours() + ":" + date.getMinutes();
 }

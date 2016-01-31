@@ -270,8 +270,8 @@ function saveCurrentEditedPost(isDraft) {
     
     var publishAsNew = lState.post.status === PostStatus.NEW;
     var action = (publishAsNew ? 
-        'action=publish_post&title='+ title +'&body='+ content +'&tags=' + tags + '&draft=' + (isDraft ? 1 : 0) : 
-        'action=update_post&id='+ lState.post.id +'&title='+ title +'&body='+ content +'&tags=' + tags + '&draft=' + (isDraft ? 1 : 0)
+        'action=publish_post&title='+ title +'&body='+ content +'&tags='+ tags +'&draft='+ (isDraft ? 1 : 0) : 
+        'action=update_post&id='+ lState.post.id +'&title='+ title +'&body='+ content +'&tags='+ tags +'&draft='+ (isDraft ? 1 : 0)
     );
     action += '&token=' + gState.authToken;
     

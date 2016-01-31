@@ -4,7 +4,7 @@
         <h2 class="{$ebl->class->postTitle}"><a href="{$post->permaLink}" class="{$ebl->class->postLink}">{$post->title}</a></h2>
         <span class="fa fa-calendar"></span> <time>{$post->createdAt|date_format:"%d %B %Y"}</time>
     </header>
-    <div class="{$ebl->class->postBody}">{$post->body|html_substr:800:"<span>... <a href=\"{$post->permaLink}\" class=\"{$ebl->class->postLink}\">read the whole post</a></span>"}</div>
+    <div class="{$ebl->class->postBody}">{$post->body|html_substr:3:"par":"<span>... <a href=\"{$post->permaLink}\" class=\"{$ebl->class->postLink}\">read the whole post</a></span>"}</div>
 </article>
 {/foreach}
 

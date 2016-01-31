@@ -13,7 +13,16 @@
  * Example Usage {$htmlString|html_substr:<lengh>:<string_to_add>} 
  ------------------------------------------------------------- 
  */ 
- function smarty_modifier_html_substr($string, $length, $end) { 
+ function smarty_modifier_html_substr($string, $length, $unit, $end) { 
+     
+     if ($unit == "par")
+     {
+         $cutAt = strposX($string, "</p>", intval($length));
+         $ret = substr($string, 0, $cutAt);
+         $ret .= $end;
+         return $ret;
+     }
+     
      // only execute if text is longer than desired length 
      if (strlen($string) > $length) { 
          if( !empty( $string ) && $length > 0 ) { 
@@ -118,5 +127,18 @@
      } 
      else { 
          return $string; 
-     } 
- } 
+     }
+     
+ }
+ 
+function strposX($haystack, $needle, $number)
+{
+    if ($number == 1)
+    {
+        return strpos($haystack, $needle);
+    } 
+    else if ($number > 1)
+    {
+        return strpos($haystack, $needle, strposX($haystack, $needle, $number - 1) + strlen($needle));
+    }
+}

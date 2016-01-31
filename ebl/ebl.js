@@ -8,7 +8,7 @@
  * Author: Alessandro Francesconi (http://www.alessandrofrancesconi.it/)
  *
  * Copyright (C) 2016 Alessandro Francesconi
- * Licensed under the GPL-3.0 license
+ * Licensed under the MIT license
  *
  */
  
@@ -43,6 +43,8 @@ function bootUp () {
         if (post.status != PostStatus.NEW) {
             post.id = getDataAttribute(template, 'eblPostId');
             post.title = getDataAttribute(template, 'eblPostTitle');
+            post.createdAt = parseDatetimeFromString(getDataAttribute(template, 'eblPostCreatedat'));
+            post.updatedAt = parseDatetimeFromString(getDataAttribute(template, 'eblPostUpdatedat'));
             post.tags = parseTagsFromString(getDataAttribute(template, 'eblPostTags'));
             
             var eblEdit = getUrlParam(location.search, 'ebl-edit');
@@ -106,7 +108,10 @@ function bootUp () {
         );
         
         bindToEvent(window, 'beforeunload', function(e) {
-            if (!isNullOrUndef(lState.editors)) return eblLang.editor_closeWarning;
+            if (!isNullOrUndef(lState.editors)) {
+                e.returnValue = eblLang.editor_closeWarning; // Gecko, Trident, Chrome 34+
+                return eblLang.editor_closeWarning;          // Gecko, WebKit, Chrome <34
+            }
         });
         
         bindToEvent(window, 'hashchange', function(e) {
@@ -723,6 +728,7 @@ function parseTagsFromString(str) {
         var clean = tagSplit[i].trim();
         clean = clean.replace(/ +(?= )/g, '');
         clean = clean.replace(/ /g, '-');
+        clean = clean.toLowerCase();
         
         var t = { id : clean };
         if (t.id.length > 0 && ids.indexOf(t.id) == -1) {
@@ -739,9 +745,29 @@ function printTagsFromArray(arr) {
     
     for (var i = 0; i < arr.length; ++i) {
         out += arr[i].id;
-        if (i < arr.length - 1) out += ', ';
+        if (i < arr.length - 1) out += ", ";
     }
     return out;
+}
+
+/** Create a Date object from string in the form 'YYYY-MM-DDThh:mm:ss'
+ * @param {string} str - The formatted string
+ */
+function parseDatetimeFromString(str) {
+    var regex = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?:\:(\d{2}))?/;
+    var res = regex.exec(str); 
+    return new Date(
+        (+res[1]),
+        (+res[2])-1,
+        (+res[3]),
+        (+res[4]),
+        (+res[5]),
+        res[6] ? (+res[6]) : 0
+    );
+}
+
+function printDatetimeFromObj(date) {
+    return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "T" + date.getHours() + ":" + date.getMinutes();
 }
 
 // Ebl uses a small set of APIs to fill the DOM during the navigation and editing:
@@ -1324,8 +1350,8 @@ function saveCurrentEditedPost(isDraft) {
     
     var publishAsNew = lState.post.status === PostStatus.NEW;
     var action = (publishAsNew ? 
-        'action=publish_post&title='+ title +'&body='+ content +'&tags=' + tags + '&draft=' + (isDraft ? 1 : 0) : 
-        'action=update_post&id='+ lState.post.id +'&title='+ title +'&body='+ content +'&tags=' + tags + '&draft=' + (isDraft ? 1 : 0)
+        'action=publish_post&title='+ title +'&body='+ content + '&tags=' + tags + '&draft=' + (isDraft ? 1 : 0) : 
+        'action=update_post&id='+ lState.post.id +'&title='+ title +'&body='+ content + '&tags=' + tags + '&draft=' + (isDraft ? 1 : 0)
     );
     action += '&token=' + gState.authToken;
     
@@ -1386,12 +1412,9 @@ function showPostSection(postId, andEdit) {
             p.id = getDataAttribute(newTemplate, 'eblPostId');
             p.status = PostStatus.parse(getDataAttribute(newTemplate, 'eblPostStatus'));
             p.title = getDataAttribute(newTemplate, 'eblPostTitle');
-            
-            p.tags = [];
-            var tagIds = getDataAttribute(newTemplate, 'eblPostTags').split(',');
-            for (var i = 0; i < tagIds.length; ++i) {
-                p.tags.push({ id: tagIds[i] });
-            }
+            p.createdAt = parseDatetimeFromString(getDataAttribute(newTemplate, 'eblPostCreatedat'));
+            p.updatedAt = parseDatetimeFromString(getDataAttribute(newTemplate, 'eblPostUpdatedat'));
+            p.tags = parseTagsFromString(getDataAttribute(newTemplate, 'eblPostTags'));
             
             activateScripts(newTemplate);
             enablePostLinks(newTemplate);
@@ -1830,6 +1853,34 @@ function showTagsDialog(defaultValue, onDone) {
     else {
         var tags = prompt(eblLang.tags_message);
         if (tags) onDone(tags);
+    }
+}
+
+function showDatetimeDialog(defaultValue, onDone) {
+    if (!gState.isAdmin) {
+        logError('can\'t show dialog, admin not logged');
+        return;
+    }
+    
+    if (hasAlertify()) {
+        var alert = alertify.prompt();
+        alert.set({
+            'title' : eblLang.datetime_title,
+            'message' : eblLang.datetime_message,
+            'closable' : false,
+            'movable' : false,
+            'resizable' : false,
+            'maximizable' : false,
+            'type' : 'datetime-local',
+            'labels' : { ok : eblLang.general_ok },
+            'value' : defaultValue,
+            'onok' : function(ev, value) { onDone(value); }
+        });
+        alert.show();
+    }
+    else {
+        var datetime = prompt(eblLang.datetime_message_format);
+        if (datetime) onDone(datetime);
     }
 }
 

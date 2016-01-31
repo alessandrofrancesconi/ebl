@@ -41,6 +41,8 @@ function bootUp () {
         if (post.status != PostStatus.NEW) {
             post.id = getDataAttribute(template, 'eblPostId');
             post.title = getDataAttribute(template, 'eblPostTitle');
+            post.createdAt = parseDatetimeFromString(getDataAttribute(template, 'eblPostCreatedat'));
+            post.updatedAt = parseDatetimeFromString(getDataAttribute(template, 'eblPostUpdatedat'));
             post.tags = parseTagsFromString(getDataAttribute(template, 'eblPostTags'));
             
             var eblEdit = getUrlParam(location.search, 'ebl-edit');
@@ -104,7 +106,10 @@ function bootUp () {
         );
         
         bindToEvent(window, 'beforeunload', function(e) {
-            if (!isNullOrUndef(lState.editors)) return eblLang.editor_closeWarning;
+            if (!isNullOrUndef(lState.editors)) {
+                e.returnValue = eblLang.editor_closeWarning; // Gecko, Trident, Chrome 34+
+                return eblLang.editor_closeWarning;          // Gecko, WebKit, Chrome <34
+            }
         });
         
         bindToEvent(window, 'hashchange', function(e) {

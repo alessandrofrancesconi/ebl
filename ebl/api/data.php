@@ -265,7 +265,7 @@ class DataApi extends EblApi {
         $doc->setId($id);
     }
     
-    private function publishPost($title, $body, $tags = "[]", $draft, $token) {
+    private function publishPost($title, $body, $tags, $draft, $token) {
         $this->throwIfNotAuth($token);
         $this->initDb();
         
@@ -288,7 +288,7 @@ class DataApi extends EblApi {
         else throw new DatabaseException("insert failed.", self::EBL_ERROR_DB_INSERT);
     }
     
-    private function updatePost($postId, $title, $body, $tags = "[]", $draft, $token) {
+    private function updatePost($postId, $title, $body, $tags, $draft, $token) {
         $this->throwIfNotAuth($token);
         $this->initDb();
         

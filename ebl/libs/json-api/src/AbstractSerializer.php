@@ -55,6 +55,7 @@ abstract class AbstractSerializer implements SerializerInterface
     {
         if (method_exists($this, $name)) {
             $relationship = $this->$name($model);
+
             if ($relationship !== null && ! ($relationship instanceof Relationship)) {
                 throw new LogicException('Relationship method must return null or an instance of Relationship');
             }

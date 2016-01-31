@@ -223,6 +223,8 @@ class RenderApi extends EblApi {
             data-ebl-post-status=\"". $post->status ."\" 
             data-ebl-post-id=\"". $postId ."\" 
             data-ebl-post-title=\"". $post->title ."\" 
+            data-ebl-post-createdat=\"". $post->createdAt ."\" 
+            data-ebl-post-updatedat=\"". $post->updatedAt ."\" 
             data-ebl-post-tags=\"". $postTags ."\">". $html ."</ebl-template>";
     }
     

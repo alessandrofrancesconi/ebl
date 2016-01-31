@@ -29,12 +29,9 @@ function showPostSection(postId, andEdit) {
             p.id = getDataAttribute(newTemplate, 'eblPostId');
             p.status = PostStatus.parse(getDataAttribute(newTemplate, 'eblPostStatus'));
             p.title = getDataAttribute(newTemplate, 'eblPostTitle');
-            
-            p.tags = [];
-            var tagIds = getDataAttribute(newTemplate, 'eblPostTags').split(',');
-            for (var i = 0; i < tagIds.length; ++i) {
-                p.tags.push({ id: tagIds[i] });
-            }
+            p.createdAt = parseDatetimeFromString(getDataAttribute(newTemplate, 'eblPostCreatedat'));
+            p.updatedAt = parseDatetimeFromString(getDataAttribute(newTemplate, 'eblPostUpdatedat'));
+            p.tags = parseTagsFromString(getDataAttribute(newTemplate, 'eblPostTags'));
             
             activateScripts(newTemplate);
             enablePostLinks(newTemplate);

@@ -301,6 +301,9 @@ pre.ebl-pre {
     font-size: 2em;
 }
 
+.ebl-icon-calendar:before {
+    content: "\f073";
+}
 .ebl-icon-trash-o:before {
 	content: "\f014";
 }

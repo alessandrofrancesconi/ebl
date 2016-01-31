@@ -266,3 +266,31 @@ function showTagsDialog(defaultValue, onDone) {
         if (tags) onDone(tags);
     }
 }
+
+function showDatetimeDialog(defaultValue, onDone) {
+    if (!gState.isAdmin) {
+        logError('can\'t show dialog, admin not logged');
+        return;
+    }
+    
+    if (hasAlertify()) {
+        var alert = alertify.prompt();
+        alert.set({
+            'title' : eblLang.datetime_title,
+            'message' : eblLang.datetime_message,
+            'closable' : false,
+            'movable' : false,
+            'resizable' : false,
+            'maximizable' : false,
+            'type' : 'datetime-local',
+            'labels' : { ok : eblLang.general_ok },
+            'value' : defaultValue,
+            'onok' : function(ev, value) { onDone(value); }
+        });
+        alert.show();
+    }
+    else {
+        var datetime = prompt(eblLang.datetime_message_format);
+        if (datetime) onDone(datetime);
+    }
+}
