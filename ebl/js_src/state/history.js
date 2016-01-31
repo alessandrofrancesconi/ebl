@@ -50,14 +50,14 @@ function goHistoryBack(count) {
 function setHistoryTitle(t) {
     if (isNullOrUndef(gState.config.pageTitleFormat)) return;
     
-    var oTitle = gState.originalTitle;
+    var dTitle = gState.docTitle;
     var fTitle = null;
     if (!isNullOrUndef(t)) {
         fTitle = gState.config.pageTitleFormat
-            .replace(/{original_title}/, oTitle)
-            .replace(/{ebl_title}/, safeTags(t));
+            .replace(/{doc_title}/g, dTitle)
+            .replace(/{ebl_title}/g, safeTags(t));
     }
-    else fTitle = oTitle;
+    else fTitle = dTitle;
     
     try { document.getElementsByTagName('title')[0].innerHTML = fTitle; } 
     catch ( Exception ) { }

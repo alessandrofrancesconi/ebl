@@ -27,7 +27,7 @@ function bootUp () {
     var c = gState.container = document.querySelector('.ebl-container');
     if (isNullOrUndef(c)) return;
     
-    gState.originalTitle = document.title;
+    gState.docTitle = document.title;
     var template = c.querySelector('ebl-template');
     
     var viewType = getDataAttribute(template, 'eblType');
@@ -2244,14 +2244,14 @@ function goHistoryBack(count) {
 function setHistoryTitle(t) {
     if (isNullOrUndef(gState.config.pageTitleFormat)) return;
     
-    var oTitle = gState.originalTitle;
+    var dTitle = gState.docTitle;
     var fTitle = null;
     if (!isNullOrUndef(t)) {
         fTitle = gState.config.pageTitleFormat
-            .replace(/{original_title}/, oTitle)
-            .replace(/{ebl_title}/, safeTags(t));
+            .replace(/{doc_title}/g, dTitle)
+            .replace(/{ebl_title}/g, safeTags(t));
     }
-    else fTitle = oTitle;
+    else fTitle = dTitle;
     
     try { document.getElementsByTagName('title')[0].innerHTML = fTitle; } 
     catch ( Exception ) { }
@@ -2271,7 +2271,7 @@ var GlobalState = Base.extend({
     constructor: function() {
         this.isAdmin = false;
         this.authToken = null;
-        this.originalTitle = null;
+        this.docTitle = null;
         this.container = null;
         
         // default config
@@ -2279,7 +2279,7 @@ var GlobalState = Base.extend({
             template: 'default',
             language: 'en',
             postsPerPage: 5,
-            pageTitleFormat: "{original_title} | {ebl_title}",
+            pageTitleFormat: "{ebl_title} | {doc_title}",
             
             // callbacks
             onBlogLoaded: null,

@@ -25,7 +25,7 @@ function bootUp () {
     var c = gState.container = document.querySelector('.ebl-container');
     if (isNullOrUndef(c)) return;
     
-    gState.originalTitle = document.title;
+    gState.docTitle = document.title;
     var template = c.querySelector('ebl-template');
     
     var viewType = getDataAttribute(template, 'eblType');

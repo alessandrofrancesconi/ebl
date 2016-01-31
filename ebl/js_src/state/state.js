@@ -4,7 +4,7 @@ var GlobalState = Base.extend({
     constructor: function() {
         this.isAdmin = false;
         this.authToken = null;
-        this.originalTitle = null;
+        this.docTitle = null;
         this.container = null;
         
         // default config
@@ -12,7 +12,7 @@ var GlobalState = Base.extend({
             template: 'default',
             language: 'en',
             postsPerPage: 5,
-            pageTitleFormat: "{original_title} | {ebl_title}",
+            pageTitleFormat: "{ebl_title} | {doc_title}",
             
             // callbacks
             onBlogLoaded: null,
