@@ -81,7 +81,7 @@ function showNewPostSection() {
             enablePostLinks(newTemplate);
             enableNavLinks(newTemplate);
             
-            setHistoryTitle(eblLang.editor_placeholder_title);
+            setHistoryTitle(l18n_("Title here..."));
             
             switchToEditorMode();
             refreshAdminBarMode();

@@ -125,3 +125,13 @@ function parseDatetimeFromString(str) {
 function printDatetimeFromObj(date) {
     return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "T" + date.getHours() + ":" + date.getMinutes();
 }
+
+function l18n_(key) {
+    if (!isNullOrUndef(ebl_l18n) && ebl_l18n.hasOwnProperty(key)) {
+        return ebl_l18n[key];
+    }
+    else {
+        logWarning("can't find translated text for key '"+ key +"', language '"+ gState.config.language +"'")
+        return key;
+    }
+}

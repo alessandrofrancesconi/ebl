@@ -2,7 +2,7 @@
  'use strict';
 /**
  * @license 
- * Ebl: the embeddable blog platform v0.0.1
+ * Ebl: the embeddable blog v0.0.1
  * https://github.com/alessandrofrancesconi/ebl
  *
  * Author: Alessandro Francesconi (http://www.alessandrofrancesconi.it/)
@@ -109,8 +109,9 @@ function bootUp () {
         
         bindToEvent(window, 'beforeunload', function(e) {
             if (!isNullOrUndef(lState.editors)) {
-                e.returnValue = eblLang.editor_closeWarning; // Gecko, Trident, Chrome 34+
-                return eblLang.editor_closeWarning;          // Gecko, WebKit, Chrome <34
+                var message = l18n_("An editor is open. If you close the window, you will lose your changes.");
+                e.returnValue = message; // Gecko, Trident, Chrome 34+
+                return message;          // Gecko, WebKit, Chrome <34
             }
         });
         
@@ -770,6 +771,16 @@ function printDatetimeFromObj(date) {
     return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "T" + date.getHours() + ":" + date.getMinutes();
 }
 
+function l18n_(key) {
+    if (!isNullOrUndef(ebl_l18n) && ebl_l18n.hasOwnProperty(key)) {
+        return ebl_l18n[key];
+    }
+    else {
+        logWarning("can't find translated text for key '"+ key +"', language '"+ gState.config.language +"'")
+        return key;
+    }
+}
+
 // Ebl uses a small set of APIs to fill the DOM during the navigation and editing:
 var ApiType = {
     DATA: 'data',       // Provides endpoints to work with data and session (get_post, get_session, ...)
@@ -1121,7 +1132,7 @@ function initEditors() {
     var titleElem = postElem.querySelector('.ebl-post-title');
     addClass(titleElem, 'ebl-editable');
     titleElem.contentEditable = true;
-    if (lState.post.status === PostStatus.NEW) titleElem.innerHTML = eblLang.editor_placeholder_title;
+    if (lState.post.status === PostStatus.NEW) titleElem.innerHTML =  l18n_("Title here...");
     else titleElem.oldValue = titleElem.innerHTML;
     
     var titleToolbar = gState.container.querySelector('.ebl-title-toolbar');
@@ -1149,7 +1160,7 @@ function initEditors() {
         toolbar: editorToolbar
     });
     
-    if (lState.post.status === PostStatus.NEW) editorInstances.content.setValue('<p>' + eblLang.editor_placeholder_content + '</p>');
+    if (lState.post.status === PostStatus.NEW) editorInstances.content.setValue('<p>' + l18n_("... and content here") + '</p>');
     editorInstances.content.on('newword:composer', moveToolbar);
     editorInstances.content.on('show:dialog', function () { addClass(editorToolbar, 'ebl-sticky'); } );
     editorInstances.content.on('cancel:dialog', function () { removeClass(editorToolbar, 'ebl-sticky'); } );
@@ -1159,8 +1170,9 @@ function initEditors() {
     
     lState.editors = editorInstances;
     
+    // remove comments area when status is NEW 
     if (lState.post.status === PostStatus.NEW) {
-        var comments = postElem.querySelectorAll('.ebl-comments');
+        var comments = postElem.querySelectorAll('.ebl-post-comments');
         for (var i = 0; i < comments.length; ++i) removeElement(comments[i]);
     }
     
@@ -1253,7 +1265,7 @@ function initEditors() {
         if (isHtml) {
             removeClass(buttonHtml, 'ebl-icon-file-code');
             addClass(buttonHtml, 'ebl-icon-file-text', 'ebl-icon-2x');
-            buttonHtml.title = eblLang.editor_toolbar_closeHTML;
+            buttonHtml.title = l18n_("Close HTML");
             showElement(buttonHtml);
             
             addClass(editorToolbar, 'ebl-sticky');
@@ -1261,7 +1273,7 @@ function initEditors() {
         else {
             removeClass(buttonHtml, 'ebl-icon-file-text', 'ebl-icon-2x');
             addClass(buttonHtml, 'ebl-icon-file-code');
-            buttonHtml.title = eblLang.editor_toolbar_editHTML;
+            buttonHtml.title = l18n_("Edit HTML");
             
             removeClass(editorToolbar, 'ebl-sticky');
         }
@@ -1332,7 +1344,7 @@ function saveCurrentEditedPost(isDraft) {
     titleElem.oldValue = titleElem.innerHTML;
     var title = encodeURIComponent(safeTags((titleElem.textContent || titleElem.innerText).trim()));
     if (title.length === 0) {
-        showPopup(PopupType.ERROR, eblLang.editor_missingTitle);
+        showPopup(PopupType.ERROR, l18n_("Title is missing!"));
         return;
     }
     
@@ -1370,9 +1382,9 @@ function saveCurrentEditedPost(isDraft) {
                 openPost(id, publishAsNew);
             }
             
-            if (isDraft) showPopup(PopupType.SUCCESS, eblLang.editor_saved);
-            else if (publishAsNew) showPopup(PopupType.SUCCESS, eblLang.editor_published);
-            else showPopup(PopupType.SUCCESS, eblLang.editor_updated);
+            if (isDraft) showPopup(PopupType.SUCCESS, l18n_("Draft saved"));
+            else if (publishAsNew) showPopup(PopupType.SUCCESS, l18n_("Published!"));
+            else showPopup(PopupType.SUCCESS, l18n_("Updated!"));
         },
         function (code, msg) {
             hideLoadingOverlay();
@@ -1464,7 +1476,7 @@ function showNewPostSection() {
             enablePostLinks(newTemplate);
             enableNavLinks(newTemplate);
             
-            setHistoryTitle(eblLang.editor_placeholder_title);
+            setHistoryTitle(l18n_("Title here..."));
             
             switchToEditorMode();
             refreshAdminBarMode();
@@ -1599,13 +1611,13 @@ function showInitRepoDialog() {
         hideElement(cancelButton);
         
         alert.set({
-            'title' : eblLang.init_title,
-            'message' : eblLang.init_message,
+            'title' : l18n_("Welcome to Ebl!"),
+            'message' : l18n_("Everything is ready to put some contents on your blog. But first, you need a passphrase! Create it here:"),
             'closable' : false,
             'movable' : false,
             'resizable' : false,
             'maximizable' : false,
-            'labels' : { ok : eblLang.general_ok },
+            'labels' : { ok : l18n_("Ok") },
             'type' : 'password',
             'value' : '',
             'onok' : function(ev, value) { callback (value, ev, this); }
@@ -1613,7 +1625,7 @@ function showInitRepoDialog() {
         alert.show();
     }
     else {
-        var psw = prompt(eblLang.init_message, '');
+        var psw = prompt(l18n_("Everything is ready to put some contents on your blog. But first, you need a passphrase! Create it here:"), '');
         if (psw) callback(psw);
     }
     
@@ -1621,7 +1633,7 @@ function showInitRepoDialog() {
         if (ev) ev.cancel = true;
         
         if (value.length < 5) {
-            if (value.length > 0) showPopup(PopupType.ERROR, eblLang.init_shortPassword);
+            if (value.length > 0) showPopup(PopupType.ERROR, l18n_("Choose a longer passphrase, it's worth it!"));
             return;
         }
         
@@ -1635,7 +1647,7 @@ function showInitRepoDialog() {
                 gState.isAdmin = true;
                 gState.authToken = res.data.attributes.token;
                 
-                showPopup(PopupType.SUCCESS, eblLang.init_ok);
+                showPopup(PopupType.SUCCESS, l18n_("Admin created, bring it on!"));
                 setAdminMode();
             },
             function(code, msg) {
@@ -1654,13 +1666,13 @@ function showLoginDialog() {
     if (hasAlertify()) {
         var alert = alertify.prompt();
         alert.set({
-            'title' : eblLang.login_title,
-            'message' : eblLang.login_message,
+            'title' : l18n_("Restricted area"),
+            'message' : l18n_("Are you the master? Type the passphrase:"),
             'closable' : false,
             'movable' : false,
             'resizable' : false,
             'maximizable' : false,
-            'labels' : { ok : eblLang.general_ok },
+            'labels' : { ok : l18n_("Ok"), cancel : l18n_("Cancel") },
             'type' : 'password',
             'value' : '',
             'onok' : function (ev, value) { callback(value, ev, this); }
@@ -1668,7 +1680,7 @@ function showLoginDialog() {
         alert.show();
     }
     else {
-        var psw = prompt(eblLang.login_message, '');
+        var psw = prompt(l18n_("Are you the master? Type the passphrase:"), '');
         if (psw) callback(psw);
     }
     
@@ -1676,7 +1688,7 @@ function showLoginDialog() {
         if (ev) ev.cancel = true;
         
         if (value.length < 5) {
-            if (value.length > 0) showPopup(PopupType.ERROR, eblLang.login_badPassword);
+            if (value.length > 0) showPopup(PopupType.ERROR, l18n_("Wrong passphrase :("));
             return;
         }
         
@@ -1689,7 +1701,7 @@ function showLoginDialog() {
                 gState.isAdmin = true;
                 gState.authToken = res.data.attributes.token;
                 
-                showPopup(PopupType.SUCCESS, eblLang.login_ok);
+                showPopup(PopupType.SUCCESS, l18n_("You have been logged in!"));
                 if (alert) alert.close();
                 
                 setAdminMode();
@@ -1698,7 +1710,7 @@ function showLoginDialog() {
             function (code, msg) {
                 if (code === ApiResult.EBL_ERROR_AUTH_SHORTACCESS) { }
                 else if (code === ApiResult.EBL_ERROR_AUTH_NOTLOGGED) {
-                    showPopup(PopupType.ERROR, eblLang.login_badPassword);
+                    showPopup(PopupType.ERROR, l18n_("Wrong passphrase :("));
                 }
                 else {
                     var fullMsg = 'login error: ' + msg;
@@ -1721,15 +1733,16 @@ function showLogoutDialog() {
         var alert = alertify.confirm();
         alert.set({
             'title': '',
-            'message': eblLang.logout_message,
+            'message': l18n_("Really log out?"),
             'modal': true,
             'movable': false,
+            'labels' : { ok : l18n_("Ok"), cancel : l18n_("Cancel") },
             'onok': callback
         });
         alert.show();
     }
     else {
-        var c = confirm(eblLang.logout_message);
+        var c = confirm(l18n_("Really log out?"));
         if (c) callback();
     }
     
@@ -1769,15 +1782,16 @@ function showDeleteDialog(postId) {
         var alert = alertify.confirm();
         alert.set({
             'title': '',
-            'message': eblLang.deletepost_confirm,
+            'message': l18n_("Do you really want to delete this post?"),
             'modal': true,
             'movable': false,
+            'labels' : { ok : l18n_("Ok"), cancel : l18n_("Cancel") },
             'onok': callback
         });
         alert.show();
     }
     else {
-        var c = confirm(eblLang.deletepost_confirm);
+        var c = confirm(l18n_("Do you really want to delete this post?"));
         if (c) callback();
     }
     
@@ -1789,7 +1803,7 @@ function showDeleteDialog(postId) {
             function() { showLoadingOverlay(); },
             function(res) {
                 hideLoadingOverlay();
-                showPopup(PopupType.SUCCESS, eblLang.deletepost_ok);
+                showPopup(PopupType.SUCCESS, l18n_("Post deleted"));
                 
                 deleteProperty(lState.post);
                 showPreviewSection();
@@ -1812,15 +1826,16 @@ function showReDraftDialog(onOk) {
         var alert = alertify.confirm();
         alert.set({
             'title': '',
-            'message': eblLang.redraft_confirm,
+            'message': l18n_("This will take this post back to a draft status, are you sure?"),
             'modal': true,
             'movable': false,
+            'labels' : { ok : l18n_("Ok"), cancel : l18n_("Cancel") },
             'onok': onOk
         });
         alert.show();
     }
     else {
-        var c = confirm(eblLang.redraft_confirm);
+        var c = confirm(l18n_("This will take this post back to a draft status, are you sure?"));
         if (c) onOk();
     }
 }
@@ -1834,55 +1849,28 @@ function showTagsDialog(defaultValue, onDone) {
     if (hasAlertify()) {
         var alert = alertify.prompt();
         var inputField = alert.elements.body.querySelector('input.ajs-input');
-        inputField.placeholder = eblLang.tags_placeholder;
+        inputField.placeholder = l18n_("e.g.: biscuits, coffee lovers, the-number-42");
         
         alert.set({
-            'title' : eblLang.tags_title,
-            'message' : eblLang.tags_message,
+            'title' : l18n_("Tags"),
+            'message' : l18n_("Write down a list of tags for this post, separated by comma. Only letters and numbers are allowed and spaces will be replaced with the \"-\" character."),
             'closable' : false,
             'movable' : false,
             'resizable' : false,
             'maximizable' : false,
             'type' : 'text',
-            'labels' : { ok : eblLang.general_ok },
+            'labels' : { ok : l18n_("Ok"), cancel : l18n_("Cancel") },
             'value' : defaultValue,
             'onok' : function(ev, value) { onDone(value); }
         });
         alert.show();
     }
     else {
-        var tags = prompt(eblLang.tags_message);
+        var tags = prompt(l18n_("Write down a list of tags for this post, separated by comma. Only letters and numbers are allowed and spaces will be replaced with the \"-\" character."));
         if (tags) onDone(tags);
     }
 }
 
-function showDatetimeDialog(defaultValue, onDone) {
-    if (!gState.isAdmin) {
-        logError('can\'t show dialog, admin not logged');
-        return;
-    }
-    
-    if (hasAlertify()) {
-        var alert = alertify.prompt();
-        alert.set({
-            'title' : eblLang.datetime_title,
-            'message' : eblLang.datetime_message,
-            'closable' : false,
-            'movable' : false,
-            'resizable' : false,
-            'maximizable' : false,
-            'type' : 'datetime-local',
-            'labels' : { ok : eblLang.general_ok },
-            'value' : defaultValue,
-            'onok' : function(ev, value) { onDone(value); }
-        });
-        alert.show();
-    }
-    else {
-        var datetime = prompt(eblLang.datetime_message_format);
-        if (datetime) onDone(datetime);
-    }
-}
 
 function showLoadingOverlay() {
     var c = gState.container;
@@ -1947,7 +1935,7 @@ function buildAdminBar () {
     };
     
     newContainer.appendChild(
-        addTooltipTo(addNew, eblLang.button_addNew)
+        addTooltipTo(addNew, l18n_("Write something new"))
     );
     
     // 'edit' container
@@ -1972,8 +1960,8 @@ function buildAdminBar () {
         showDeleteDialog(lState.post.id);
     };
     
-    editContainer.appendChild(addTooltipTo(editPost, eblLang.button_editPost));
-    editContainer.appendChild(addTooltipTo(deletePost, eblLang.button_deletePost));
+    editContainer.appendChild(addTooltipTo(editPost, l18n_("Edit this post")));
+    editContainer.appendChild(addTooltipTo(deletePost, l18n_("Delete this post")));
     
     // 'save / cancel' container
     var publishContainer = document.createElement('div');
@@ -1999,9 +1987,9 @@ function buildAdminBar () {
         goHistoryBack();
     };
     
-    publishContainer.appendChild(addTooltipTo(saveDraft, eblLang.button_saveDraft));
-    publishContainer.appendChild(addTooltipTo(publishPost, eblLang.button_publishPost));
-    publishContainer.appendChild(addTooltipTo(cancelEdit, eblLang.general_cancel));
+    publishContainer.appendChild(addTooltipTo(saveDraft, l18n_("Save as draft")));
+    publishContainer.appendChild(addTooltipTo(publishPost, l18n_("Publish now")));
+    publishContainer.appendChild(addTooltipTo(cancelEdit, l18n_("Cancel")));
     
     // 'logout' button
     var logOut = createButton('ebl-action-logout');
@@ -2051,56 +2039,56 @@ function buildEditorToolbar() {
     
     var format = document.createElement('div');
     
-    var undo = createButton('ebl-action-editor-undo', eblLang.editor_toolbar_undo);
+    var undo = createButton('ebl-action-editor-undo', l18n_("Undo"));
     addClass(undo, 'ebl-icon-rotate-left');
     setDataAttribute(undo, 'wysihtml5Command', 'undo');
     
-    var textBold = createButton('ebl-action-editor-bold', eblLang.editor_toolbar_textBold);
+    var textBold = createButton('ebl-action-editor-bold', l18n_("Bold"));
     addClass(textBold, 'ebl-icon-bold');
     setDataAttribute(textBold, 'wysihtml5Command', 'bold');
     
-    var textItalic = createButton('ebl-action-editor-italic', eblLang.editor_toolbar_textItalic);
+    var textItalic = createButton('ebl-action-editor-italic', l18n_("Italic"));
     addClass(textItalic, 'ebl-icon-italic');
     setDataAttribute(textItalic, 'wysihtml5Command', 'italic');
     
-    var textUnderline = createButton('ebl-action-editor-underline', eblLang.editor_toolbar_textUnderline);
+    var textUnderline = createButton('ebl-action-editor-underline', l18n_("Underline"));
     addClass(textUnderline, 'ebl-icon-underline');
     setDataAttribute(textUnderline, 'wysihtml5Command', 'underline');
     
-    var textH1 = createButton('ebl-action-editor-h1', eblLang.editor_toolbar_textH1);
+    var textH1 = createButton('ebl-action-editor-h1', l18n_("H1"));
     addClass(textH1, 'ebl-icon-header');
     setDataAttribute(textH1, 'wysihtml5Command', 'formatBlock');
     setDataAttribute(textH1, 'wysihtml5CommandValue', 'h1');
     
-    var alignLeft = createButton('ebl-action-editor-alignleft', eblLang.editor_toolbar_textAlignLeft);
+    var alignLeft = createButton('ebl-action-editor-alignleft', l18n_("Align left"));
     addClass(alignLeft, 'ebl-icon-align-left');
     setDataAttribute(alignLeft, 'wysihtml5Command', 'justifyLeft');
     
-    var alignCenter = createButton('ebl-action-editor-aligncenter', eblLang.editor_toolbar_textAlignCenter);
+    var alignCenter = createButton('ebl-action-editor-aligncenter', l18n_("Align center"));
     addClass(alignCenter, 'ebl-icon-align-center');
     setDataAttribute(alignCenter, 'wysihtml5Command', 'justifyCenter');
     
-    var alignRight = createButton('ebl-action-editor-alignright', eblLang.editor_toolbar_textAlignRight);
+    var alignRight = createButton('ebl-action-editor-alignright', l18n_("Align right"));
     addClass(alignRight, 'ebl-icon-align-right');
     setDataAttribute(alignRight, 'wysihtml5Command', 'justifyRight');
     
-    var addUl = createButton('ebl-action-editor-addul', eblLang.editor_toolbar_addUl);
+    var addUl = createButton('ebl-action-editor-addul', l18n_("Unordered list"));
     addClass(addUl, 'ebl-icon-list-ul');
     setDataAttribute(addUl, 'wysihtml5Command', 'insertUnorderedList');
     
-    var addOl = createButton('ebl-action-editor-addol', eblLang.editor_toolbar_addOl);
+    var addOl = createButton('ebl-action-editor-addol', l18n_("Ordered list"));
     addClass(addOl, 'ebl-icon-list-ol');
     setDataAttribute(addOl, 'wysihtml5Command', 'insertOrderedList');
     
-    var addImage = createButton('ebl-action-editor-addimage', eblLang.editor_toolbar_addImage);
+    var addImage = createButton('ebl-action-editor-addimage', l18n_("Add image"));
     addClass(addImage, 'ebl-icon-image');
     setDataAttribute(addImage, 'wysihtml5Command', 'insertImage');
     
-    var addLink = createButton('ebl-action-editor-addlink', eblLang.editor_toolbar_addLink);
+    var addLink = createButton('ebl-action-editor-addlink', l18n_("Add link"));
     addClass(addLink, 'ebl-icon-chain');
     setDataAttribute(addLink, 'wysihtml5Command', 'createLink');
     
-    var showHtml = createButton('ebl-action-editor-html', eblLang.editor_toolbar_editHTML);
+    var showHtml = createButton('ebl-action-editor-html', l18n_("Edit HTML"));
     addClass(showHtml, 'ebl-icon-file-code');
     setDataAttribute(showHtml, 'wysihtml5Action', 'change_view');
     
@@ -2137,8 +2125,8 @@ function buildEditorToolbar() {
     imageSrc.type = 'text';
     imageSrc.value = 'http://';
     
-    var imageSrcSave = createButton('ebl-action-editor-image-save', eblLang.editor_toolbar_addImage);
-    imageSrcSave.innerHTML = eblLang.editor_toolbar_addImage;
+    var imageSrcSave = createButton('ebl-action-editor-image-save', l18n_("Add image"));
+    imageSrcSave.innerHTML = l18n_("Add image");
     setDataAttribute(imageSrcSave, 'wysihtml5DialogAction', 'save');
     
     image.appendChild(imageSrc);
@@ -2154,8 +2142,8 @@ function buildEditorToolbar() {
     linkUrl.type = 'text';
     linkUrl.value = 'http://';
     
-    var linkUrlSave = createButton('ebl-action-editor-link-save', eblLang.editor_toolbar_addLink);
-    linkUrlSave.innerHTML = eblLang.editor_toolbar_addLink;
+    var linkUrlSave = createButton('ebl-action-editor-link-save', l18n_("Add link"));
+    linkUrlSave.innerHTML = l18n_("Add link");
     setDataAttribute(linkUrlSave, 'wysihtml5DialogAction', 'save');
     
     link.appendChild(linkUrl);
@@ -2176,7 +2164,7 @@ function buildTitleToolbar() {
     var bar = document.createElement('div');
     addClass(bar, 'ebl-toolbar', 'ebl-title-toolbar');
     
-    var tags = createButton('ebl-action-title-tag', eblLang.title_toolbar_tags);
+    var tags = createButton('ebl-action-title-tag',  l18n_("Tags"));
     addClass(tags, 'ebl-icon-tags');
     tags.onmousedown = function() {
         showTagsDialog(printTagsFromArray(lState.post.tags), function (newTags) {

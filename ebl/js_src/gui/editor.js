@@ -41,7 +41,7 @@ function initEditors() {
     var titleElem = postElem.querySelector('.ebl-post-title');
     addClass(titleElem, 'ebl-editable');
     titleElem.contentEditable = true;
-    if (lState.post.status === PostStatus.NEW) titleElem.innerHTML = eblLang.editor_placeholder_title;
+    if (lState.post.status === PostStatus.NEW) titleElem.innerHTML =  l18n_("Title here...");
     else titleElem.oldValue = titleElem.innerHTML;
     
     var titleToolbar = gState.container.querySelector('.ebl-title-toolbar');
@@ -69,7 +69,7 @@ function initEditors() {
         toolbar: editorToolbar
     });
     
-    if (lState.post.status === PostStatus.NEW) editorInstances.content.setValue('<p>' + eblLang.editor_placeholder_content + '</p>');
+    if (lState.post.status === PostStatus.NEW) editorInstances.content.setValue('<p>' + l18n_("... and content here") + '</p>');
     editorInstances.content.on('newword:composer', moveToolbar);
     editorInstances.content.on('show:dialog', function () { addClass(editorToolbar, 'ebl-sticky'); } );
     editorInstances.content.on('cancel:dialog', function () { removeClass(editorToolbar, 'ebl-sticky'); } );
@@ -79,8 +79,9 @@ function initEditors() {
     
     lState.editors = editorInstances;
     
+    // remove comments area when status is NEW 
     if (lState.post.status === PostStatus.NEW) {
-        var comments = postElem.querySelectorAll('.ebl-comments');
+        var comments = postElem.querySelectorAll('.ebl-post-comments');
         for (var i = 0; i < comments.length; ++i) removeElement(comments[i]);
     }
     
@@ -173,7 +174,7 @@ function initEditors() {
         if (isHtml) {
             removeClass(buttonHtml, 'ebl-icon-file-code');
             addClass(buttonHtml, 'ebl-icon-file-text', 'ebl-icon-2x');
-            buttonHtml.title = eblLang.editor_toolbar_closeHTML;
+            buttonHtml.title = l18n_("Close HTML");
             showElement(buttonHtml);
             
             addClass(editorToolbar, 'ebl-sticky');
@@ -181,7 +182,7 @@ function initEditors() {
         else {
             removeClass(buttonHtml, 'ebl-icon-file-text', 'ebl-icon-2x');
             addClass(buttonHtml, 'ebl-icon-file-code');
-            buttonHtml.title = eblLang.editor_toolbar_editHTML;
+            buttonHtml.title = l18n_("Edit HTML");
             
             removeClass(editorToolbar, 'ebl-sticky');
         }
@@ -252,7 +253,7 @@ function saveCurrentEditedPost(isDraft) {
     titleElem.oldValue = titleElem.innerHTML;
     var title = encodeURIComponent(safeTags((titleElem.textContent || titleElem.innerText).trim()));
     if (title.length === 0) {
-        showPopup(PopupType.ERROR, eblLang.editor_missingTitle);
+        showPopup(PopupType.ERROR, l18n_("Title is missing!"));
         return;
     }
     
@@ -290,9 +291,9 @@ function saveCurrentEditedPost(isDraft) {
                 openPost(id, publishAsNew);
             }
             
-            if (isDraft) showPopup(PopupType.SUCCESS, eblLang.editor_saved);
-            else if (publishAsNew) showPopup(PopupType.SUCCESS, eblLang.editor_published);
-            else showPopup(PopupType.SUCCESS, eblLang.editor_updated);
+            if (isDraft) showPopup(PopupType.SUCCESS, l18n_("Draft saved"));
+            else if (publishAsNew) showPopup(PopupType.SUCCESS, l18n_("Published!"));
+            else showPopup(PopupType.SUCCESS, l18n_("Updated!"));
         },
         function (code, msg) {
             hideLoadingOverlay();

@@ -107,8 +107,9 @@ function bootUp () {
         
         bindToEvent(window, 'beforeunload', function(e) {
             if (!isNullOrUndef(lState.editors)) {
-                e.returnValue = eblLang.editor_closeWarning; // Gecko, Trident, Chrome 34+
-                return eblLang.editor_closeWarning;          // Gecko, WebKit, Chrome <34
+                var message = l18n_("An editor is open. If you close the window, you will lose your changes.");
+                e.returnValue = message; // Gecko, Trident, Chrome 34+
+                return message;          // Gecko, WebKit, Chrome <34
             }
         });
         

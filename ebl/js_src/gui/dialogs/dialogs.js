@@ -10,13 +10,13 @@ function showInitRepoDialog() {
         hideElement(cancelButton);
         
         alert.set({
-            'title' : eblLang.init_title,
-            'message' : eblLang.init_message,
+            'title' : l18n_("Welcome to Ebl!"),
+            'message' : l18n_("Everything is ready to put some contents on your blog. But first, you need a passphrase! Create it here:"),
             'closable' : false,
             'movable' : false,
             'resizable' : false,
             'maximizable' : false,
-            'labels' : { ok : eblLang.general_ok },
+            'labels' : { ok : l18n_("Ok") },
             'type' : 'password',
             'value' : '',
             'onok' : function(ev, value) { callback (value, ev, this); }
@@ -24,7 +24,7 @@ function showInitRepoDialog() {
         alert.show();
     }
     else {
-        var psw = prompt(eblLang.init_message, '');
+        var psw = prompt(l18n_("Everything is ready to put some contents on your blog. But first, you need a passphrase! Create it here:"), '');
         if (psw) callback(psw);
     }
     
@@ -32,7 +32,7 @@ function showInitRepoDialog() {
         if (ev) ev.cancel = true;
         
         if (value.length < 5) {
-            if (value.length > 0) showPopup(PopupType.ERROR, eblLang.init_shortPassword);
+            if (value.length > 0) showPopup(PopupType.ERROR, l18n_("Choose a longer passphrase, it's worth it!"));
             return;
         }
         
@@ -46,7 +46,7 @@ function showInitRepoDialog() {
                 gState.isAdmin = true;
                 gState.authToken = res.data.attributes.token;
                 
-                showPopup(PopupType.SUCCESS, eblLang.init_ok);
+                showPopup(PopupType.SUCCESS, l18n_("Admin created, bring it on!"));
                 setAdminMode();
             },
             function(code, msg) {
@@ -65,13 +65,13 @@ function showLoginDialog() {
     if (hasAlertify()) {
         var alert = alertify.prompt();
         alert.set({
-            'title' : eblLang.login_title,
-            'message' : eblLang.login_message,
+            'title' : l18n_("Restricted area"),
+            'message' : l18n_("Are you the master? Type the passphrase:"),
             'closable' : false,
             'movable' : false,
             'resizable' : false,
             'maximizable' : false,
-            'labels' : { ok : eblLang.general_ok },
+            'labels' : { ok : l18n_("Ok"), cancel : l18n_("Cancel") },
             'type' : 'password',
             'value' : '',
             'onok' : function (ev, value) { callback(value, ev, this); }
@@ -79,7 +79,7 @@ function showLoginDialog() {
         alert.show();
     }
     else {
-        var psw = prompt(eblLang.login_message, '');
+        var psw = prompt(l18n_("Are you the master? Type the passphrase:"), '');
         if (psw) callback(psw);
     }
     
@@ -87,7 +87,7 @@ function showLoginDialog() {
         if (ev) ev.cancel = true;
         
         if (value.length < 5) {
-            if (value.length > 0) showPopup(PopupType.ERROR, eblLang.login_badPassword);
+            if (value.length > 0) showPopup(PopupType.ERROR, l18n_("Wrong passphrase :("));
             return;
         }
         
@@ -100,7 +100,7 @@ function showLoginDialog() {
                 gState.isAdmin = true;
                 gState.authToken = res.data.attributes.token;
                 
-                showPopup(PopupType.SUCCESS, eblLang.login_ok);
+                showPopup(PopupType.SUCCESS, l18n_("You have been logged in!"));
                 if (alert) alert.close();
                 
                 setAdminMode();
@@ -109,7 +109,7 @@ function showLoginDialog() {
             function (code, msg) {
                 if (code === ApiResult.EBL_ERROR_AUTH_SHORTACCESS) { }
                 else if (code === ApiResult.EBL_ERROR_AUTH_NOTLOGGED) {
-                    showPopup(PopupType.ERROR, eblLang.login_badPassword);
+                    showPopup(PopupType.ERROR, l18n_("Wrong passphrase :("));
                 }
                 else {
                     var fullMsg = 'login error: ' + msg;
@@ -132,15 +132,16 @@ function showLogoutDialog() {
         var alert = alertify.confirm();
         alert.set({
             'title': '',
-            'message': eblLang.logout_message,
+            'message': l18n_("Really log out?"),
             'modal': true,
             'movable': false,
+            'labels' : { ok : l18n_("Ok"), cancel : l18n_("Cancel") },
             'onok': callback
         });
         alert.show();
     }
     else {
-        var c = confirm(eblLang.logout_message);
+        var c = confirm(l18n_("Really log out?"));
         if (c) callback();
     }
     
@@ -180,15 +181,16 @@ function showDeleteDialog(postId) {
         var alert = alertify.confirm();
         alert.set({
             'title': '',
-            'message': eblLang.deletepost_confirm,
+            'message': l18n_("Do you really want to delete this post?"),
             'modal': true,
             'movable': false,
+            'labels' : { ok : l18n_("Ok"), cancel : l18n_("Cancel") },
             'onok': callback
         });
         alert.show();
     }
     else {
-        var c = confirm(eblLang.deletepost_confirm);
+        var c = confirm(l18n_("Do you really want to delete this post?"));
         if (c) callback();
     }
     
@@ -200,7 +202,7 @@ function showDeleteDialog(postId) {
             function() { showLoadingOverlay(); },
             function(res) {
                 hideLoadingOverlay();
-                showPopup(PopupType.SUCCESS, eblLang.deletepost_ok);
+                showPopup(PopupType.SUCCESS, l18n_("Post deleted"));
                 
                 deleteProperty(lState.post);
                 showPreviewSection();
@@ -223,15 +225,16 @@ function showReDraftDialog(onOk) {
         var alert = alertify.confirm();
         alert.set({
             'title': '',
-            'message': eblLang.redraft_confirm,
+            'message': l18n_("This will take this post back to a draft status, are you sure?"),
             'modal': true,
             'movable': false,
+            'labels' : { ok : l18n_("Ok"), cancel : l18n_("Cancel") },
             'onok': onOk
         });
         alert.show();
     }
     else {
-        var c = confirm(eblLang.redraft_confirm);
+        var c = confirm(l18n_("This will take this post back to a draft status, are you sure?"));
         if (c) onOk();
     }
 }
@@ -245,52 +248,24 @@ function showTagsDialog(defaultValue, onDone) {
     if (hasAlertify()) {
         var alert = alertify.prompt();
         var inputField = alert.elements.body.querySelector('input.ajs-input');
-        inputField.placeholder = eblLang.tags_placeholder;
+        inputField.placeholder = l18n_("e.g.: biscuits, coffee lovers, the-number-42");
         
         alert.set({
-            'title' : eblLang.tags_title,
-            'message' : eblLang.tags_message,
+            'title' : l18n_("Tags"),
+            'message' : l18n_("Write down a list of tags for this post, separated by comma. Only letters and numbers are allowed and spaces will be replaced with the \"-\" character."),
             'closable' : false,
             'movable' : false,
             'resizable' : false,
             'maximizable' : false,
             'type' : 'text',
-            'labels' : { ok : eblLang.general_ok },
+            'labels' : { ok : l18n_("Ok"), cancel : l18n_("Cancel") },
             'value' : defaultValue,
             'onok' : function(ev, value) { onDone(value); }
         });
         alert.show();
     }
     else {
-        var tags = prompt(eblLang.tags_message);
+        var tags = prompt(l18n_("Write down a list of tags for this post, separated by comma. Only letters and numbers are allowed and spaces will be replaced with the \"-\" character."));
         if (tags) onDone(tags);
-    }
-}
-
-function showDatetimeDialog(defaultValue, onDone) {
-    if (!gState.isAdmin) {
-        logError('can\'t show dialog, admin not logged');
-        return;
-    }
-    
-    if (hasAlertify()) {
-        var alert = alertify.prompt();
-        alert.set({
-            'title' : eblLang.datetime_title,
-            'message' : eblLang.datetime_message,
-            'closable' : false,
-            'movable' : false,
-            'resizable' : false,
-            'maximizable' : false,
-            'type' : 'datetime-local',
-            'labels' : { ok : eblLang.general_ok },
-            'value' : defaultValue,
-            'onok' : function(ev, value) { onDone(value); }
-        });
-        alert.show();
-    }
-    else {
-        var datetime = prompt(eblLang.datetime_message_format);
-        if (datetime) onDone(datetime);
     }
 }

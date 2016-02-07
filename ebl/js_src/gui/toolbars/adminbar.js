@@ -17,7 +17,7 @@ function buildAdminBar () {
     };
     
     newContainer.appendChild(
-        addTooltipTo(addNew, eblLang.button_addNew)
+        addTooltipTo(addNew, l18n_("Write something new"))
     );
     
     // 'edit' container
@@ -42,8 +42,8 @@ function buildAdminBar () {
         showDeleteDialog(lState.post.id);
     };
     
-    editContainer.appendChild(addTooltipTo(editPost, eblLang.button_editPost));
-    editContainer.appendChild(addTooltipTo(deletePost, eblLang.button_deletePost));
+    editContainer.appendChild(addTooltipTo(editPost, l18n_("Edit this post")));
+    editContainer.appendChild(addTooltipTo(deletePost, l18n_("Delete this post")));
     
     // 'save / cancel' container
     var publishContainer = document.createElement('div');
@@ -69,9 +69,9 @@ function buildAdminBar () {
         goHistoryBack();
     };
     
-    publishContainer.appendChild(addTooltipTo(saveDraft, eblLang.button_saveDraft));
-    publishContainer.appendChild(addTooltipTo(publishPost, eblLang.button_publishPost));
-    publishContainer.appendChild(addTooltipTo(cancelEdit, eblLang.general_cancel));
+    publishContainer.appendChild(addTooltipTo(saveDraft, l18n_("Save as draft")));
+    publishContainer.appendChild(addTooltipTo(publishPost, l18n_("Publish now")));
+    publishContainer.appendChild(addTooltipTo(cancelEdit, l18n_("Cancel")));
     
     // 'logout' button
     var logOut = createButton('ebl-action-logout');
