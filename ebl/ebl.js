@@ -1910,7 +1910,7 @@ function showPopup(type, text) {
         if (hasAlertify()) alertify.error(text); else alert(text);
     }
     else if (type == PopupType.FATAL) {
-        if (hasAlertify()) alertify.alert('', '<p class="ebl-error">' + eblLang.general_fatalError + '</p><pre class="ebl-pre">' + text + '</pre>'); 
+        if (hasAlertify()) alertify.alert('', '<p class="ebl-error">' + l18n_("Oops! An annoying problem occurred. Here are some details:") + '</p><pre class="ebl-pre">' + text + '</pre>'); 
         else alert(text);
     }
 }

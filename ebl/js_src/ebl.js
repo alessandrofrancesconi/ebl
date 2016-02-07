@@ -10,7 +10,7 @@
  *
  */
  
-/*global alertify, eblLang, wysihtml5, wysihtml5ParserRules, ActiveXObject*/
+/*global alertify, wysihtml5, wysihtml5ParserRules, ActiveXObject*/
  
 var Ebl = window.Ebl = {};
     Ebl.version = '@VERSION';
