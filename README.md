@@ -1,5 +1,5 @@
-Ebl: the embeddable blog engine
-===============================
+Ebl: the embeddable blog
+========================
 
 Ebl is a blog engine (or platform? or framework?) created to be fast and simple but, above all, to be extremely easy to include in an existing website.
 
