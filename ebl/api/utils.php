@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This file is part of
+ * Ebl: the embeddable blog
+ *
+ * Licensed under the MIT license
+ */
+ 
 function generateRandomString ($length){
     $randString = "";
     $availableChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

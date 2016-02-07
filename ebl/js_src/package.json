@@ -2,25 +2,29 @@
   "name": "Ebl",
   "version": "0.0.1",
   "debug": true,
-  "devDependencies": {
+  "devDependencies": 
+  {
     "grunt": "^0.4.5",
     "grunt-contrib-concat": "^0.5.1",
     "grunt-contrib-uglify": "^0.9.1"
   },
-  "description": "Ebl: the embeddable blog engine",
+  "description": "Ebl: the embeddable blog",
   "main": "Gruntfile.js",
-  "repository": {
+  "repository": 
+  {
     "type": "git",
     "url": "git://github.com/alessandrofrancesconi/ebl"
   },
-  "author": {
+  "author": 
+  {
     "name": "Alessandro Francesconi",
     "email": "alessandrofrancesconi@live.it",
     "url": "http://www.alessandrofrancesconi.it/"
   },
   "author_homepage": "http://www.alessandrofrancesconi.it",
   "license": "MIT",
-  "bugs": {
+  "bugs": 
+  {
     "url": "https://github.com/alessandrofrancesconi/ebl/issues"
   },
   "homepage": "https://github.com/alessandrofrancesconi/ebl"

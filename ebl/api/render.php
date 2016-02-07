@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This file is part of
+ * Ebl: the embeddable blog
+ *
+ * Licensed under the MIT license
+ */
+ 
 require ("EblApi.php");
 require ("../libs/Smarty/Smarty/Smarty.class.php");
 

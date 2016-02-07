@@ -1,12 +1,9 @@
 
 /**
- * Ebl: the embeddable blog engine
- * https://github.com/alessandrofrancesconi/ebl
- *
- * Author: Alessandro Francesconi (http://www.alessandrofrancesconi.it/)
- *
- * Copyright (C) 2015 Alessandro Francesconi
- * Licensed under the GPL-3.0 license
+ * This file is part of
+ * Ebl: the embeddable blog
+ * 
+ * Licensed under the MIT license
  * 
  * This CSS file is used for core functionalities, you should NOT edit it.
  */
@@ -20,7 +17,7 @@
     cursor: pointer;
 }
 
-.ebl-button:disabled{
+.ebl-button:disabled {
     opacity: 0.5;
 }
 

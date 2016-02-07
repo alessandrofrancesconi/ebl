@@ -1,6 +1,6 @@
 /**
  * @license 
- * Ebl: the embeddable blog platform v@VERSION
+ * Ebl: the embeddable blog v@VERSION
  * @HOMEPAGE
  *
  * Author: @AUTHOR (@AUTHOMEPAGE)

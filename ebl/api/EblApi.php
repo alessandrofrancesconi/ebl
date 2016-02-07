@@ -1,7 +1,9 @@
 <?php
 
 /**
- * Ebl: the embeddable blog platform
+ * This file is part of
+ * Ebl: the embeddable blog
+ *
  * Licensed under the MIT license
  */
 
