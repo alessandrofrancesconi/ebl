@@ -1,7 +1,7 @@
 /** Adds all the given files as dependencies in the Document.
  * Supported formats: JS and CSS.
  * @param {Object} list - An array of dependecy information. Every element is an object structured like this:
- *                        { type : "<js/css>", url : "<url of the resource>"};
+ *                        { type : "<js|css>", url : "<url of the resource>", required : <true|false>};
  * @param {finishCallback} onDone - Function called when all the files have been included
  */
 function includeDependencies (list, onDone) {
@@ -15,7 +15,7 @@ function includeDependencies (list, onDone) {
     
     var i = 0;
     while (i < total) {
-        include(list[i].url, list[i].type, includeCallback); 
+        include(list[i], includeCallback); 
         i++;
     }
     
@@ -24,17 +24,17 @@ function includeDependencies (list, onDone) {
         if (++count == total) onDone();
     }
     
-    function include(url, t, callback) {
+    function include(file, callback) {
         var elem;
         
-        if (t === 'css') {
+        if (file.type === 'css') {
             elem = document.createElement('link');
             elem.rel = 'stylesheet';
             elem.type = 'text/css';
-            elem.href = url;
-            if (typeof callback === 'function') callback(url);
+            elem.href = file.url;
+            if (typeof callback === 'function') callback(file.url);
         }
-        else if (t === 'js') {
+        else if (file.type === 'js') {
             elem = document.createElement('script');
             elem.type = 'text/javascript';
             
@@ -42,19 +42,20 @@ function includeDependencies (list, onDone) {
                 elem.onreadystatechange = function() {
                     if (elem.readyState == 'loaded' || elem.readyState == 'complete') {
                         elem.onreadystatechange = null;
-                        if (typeof callback === 'function') callback(url);
+                        if (typeof callback === 'function') callback(file.url);
                     }
                 };
             } else {
                 elem.onload = function() {
-                    if (typeof callback === 'function') callback(url);
+                    if (typeof callback === 'function') callback(file.url);
                 };
                 elem.onerror = function() {
-                    logError('error loading ' + url);
+                    logError('error loading ' + file.url);
+                    if (!file.required && typeof callback === 'function') callback(file.url);
                 };
             }
             
-            elem.src = url;
+            elem.src = file.url;
         }
         
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(elem);

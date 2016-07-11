@@ -12,7 +12,7 @@
  *
  */
  
-/*global alertify, eblLang, wysihtml5, wysihtml5ParserRules, ActiveXObject*/
+/*global alertify, wysihtml, wysihtmlParserRules, ActiveXObject*/
  
 var Ebl = window.Ebl = {};
     Ebl.version = '0.0.1';
@@ -59,12 +59,12 @@ function bootUp () {
     
     // load all the dependencies
     var dependencies = [];
-    dependencies.push({url: scriptPath + '/languages/' + gState.config.language + '.js', type: 'js'});
-    dependencies.push({url: scriptPath + '/css/base.css', type: 'css'});
+    if (gState.config.language != 'en') dependencies.push({url: scriptPath + '/languages/' + gState.config.language + '.js', type: 'js', required : false});
+    dependencies.push({url: scriptPath + '/css/base.css', type: 'css', required : true});
     if (!hasAlertify() && !isBadBrowser()) {
-        dependencies.push({url: scriptPath + '/libs/alertify/alertify.min.js', type: 'js'});
-        dependencies.push({url: scriptPath + '/libs/alertify/css/alertify.min.css', type: 'css'});
-        dependencies.push({url: scriptPath + '/libs/alertify/css/themes/default.min.css', type: 'css'});
+        dependencies.push({url: scriptPath + '/libs/alertify/alertify.min.js', type: 'js', required : true});
+        dependencies.push({url: scriptPath + '/libs/alertify/css/alertify.min.css', type: 'css', required : true});
+        dependencies.push({url: scriptPath + '/libs/alertify/css/themes/default.min.css', type: 'css', required : false});
     }
     
     includeDependencies(dependencies, function() {            
@@ -772,12 +772,12 @@ function printDatetimeFromObj(date) {
 }
 
 function l18n_(key) {
-    if (!isNullOrUndef(ebl_l18n) && ebl_l18n.hasOwnProperty(key)) {
-        return ebl_l18n[key];
+    if (typeof ebl_l18n === 'undefined' || !ebl_l18n.hasOwnProperty(key)) {
+        if (gState.config.language != 'en') logWarning("can't find translated text for key '"+ key +"', language '"+ gState.config.language +"'")
+        return key;
     }
     else {
-        logWarning("can't find translated text for key '"+ key +"', language '"+ gState.config.language +"'")
-        return key;
+        return ebl_l18n[key];
     }
 }
 
@@ -1028,7 +1028,7 @@ function isDOMElement(obj){
 /** Adds all the given files as dependencies in the Document.
  * Supported formats: JS and CSS.
  * @param {Object} list - An array of dependecy information. Every element is an object structured like this:
- *                        { type : "<js/css>", url : "<url of the resource>"};
+ *                        { type : "<js|css>", url : "<url of the resource>", required : <true|false>};
  * @param {finishCallback} onDone - Function called when all the files have been included
  */
 function includeDependencies (list, onDone) {
@@ -1042,7 +1042,7 @@ function includeDependencies (list, onDone) {
     
     var i = 0;
     while (i < total) {
-        include(list[i].url, list[i].type, includeCallback); 
+        include(list[i], includeCallback); 
         i++;
     }
     
@@ -1051,17 +1051,17 @@ function includeDependencies (list, onDone) {
         if (++count == total) onDone();
     }
     
-    function include(url, t, callback) {
+    function include(file, callback) {
         var elem;
         
-        if (t === 'css') {
+        if (file.type === 'css') {
             elem = document.createElement('link');
             elem.rel = 'stylesheet';
             elem.type = 'text/css';
-            elem.href = url;
-            if (typeof callback === 'function') callback(url);
+            elem.href = file.url;
+            if (typeof callback === 'function') callback(file.url);
         }
-        else if (t === 'js') {
+        else if (file.type === 'js') {
             elem = document.createElement('script');
             elem.type = 'text/javascript';
             
@@ -1069,19 +1069,20 @@ function includeDependencies (list, onDone) {
                 elem.onreadystatechange = function() {
                     if (elem.readyState == 'loaded' || elem.readyState == 'complete') {
                         elem.onreadystatechange = null;
-                        if (typeof callback === 'function') callback(url);
+                        if (typeof callback === 'function') callback(file.url);
                     }
                 };
             } else {
                 elem.onload = function() {
-                    if (typeof callback === 'function') callback(url);
+                    if (typeof callback === 'function') callback(file.url);
                 };
                 elem.onerror = function() {
-                    logError('error loading ' + url);
+                    logError('error loading ' + file.url);
+                    if (!file.required && typeof callback === 'function') callback(file.url);
                 };
             }
             
-            elem.src = url;
+            elem.src = file.url;
         }
         
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(elem);
@@ -1097,7 +1098,7 @@ function switchToEditorMode () {
         return;
     }
     
-    if (typeof wysihtml5 === 'undefined') {
+    if (typeof wysihtml === 'undefined') {
         
         if (editorDepLoad >= 1) {
             logError('error loading editor library.');
@@ -1107,12 +1108,12 @@ function switchToEditorMode () {
         
         logDebug('editor library not yet loaded. perform loading now...');
         var dependencies = [];
-        dependencies.push({url: scriptPath + '/libs/wysihtml/wysihtml-toolbar.min.js', type: 'js'});
+        dependencies.push({url: scriptPath + '/libs/wysihtml/wysihtml.min.js', type: 'js'});
+        dependencies.push({url: scriptPath + '/libs/wysihtml/wysihtml.toolbar.min.js', type: 'js'});
+        dependencies.push({url: scriptPath + '/libs/wysihtml/wysihtml.table_editing.min.js', type: 'js'});
+        dependencies.push({url: scriptPath + '/libs/wysihtml/parser_rules/advanced_and_extended.js', type: 'js'});
         
-        includeDependencies(dependencies, function() {
-            dependencies = [];
-            dependencies.push({url: scriptPath + '/libs/wysihtml/parser_rules/advanced_and_extended.js', type: 'js'});
-            includeDependencies(dependencies, function() { switchToEditorMode(); }); });
+        includeDependencies(dependencies, function() { switchToEditorMode(); });
         
         return;
     }
@@ -1150,11 +1151,11 @@ function initEditors() {
     var editorToolbar = gState.container.querySelector('.ebl-editor-toolbar');
     if (isNullOrUndef(editorToolbar)) editorToolbar = buildEditorToolbar();
     
-    editorInstances.content = new wysihtml5.Editor(contentElem, {
+    editorInstances.content = new wysihtml.Editor(contentElem, {
         name: 'ebl-editor-body',
         style: false,
         showToolbarAfterInit: false,
-        parserRules: wysihtml5ParserRules,
+        parserRules: wysihtmlParserRules,
         uneditableContainerClassname: false,
         useLineBreaks: false,
         toolbar: editorToolbar
@@ -1910,7 +1911,7 @@ function showPopup(type, text) {
         if (hasAlertify()) alertify.error(text); else alert(text);
     }
     else if (type == PopupType.FATAL) {
-        if (hasAlertify()) alertify.alert('', '<p class="ebl-error">' + l18n_("Oops! An annoying problem occurred. Here are some details:") + '</p><pre class="ebl-pre">' + text + '</pre>'); 
+        if (hasAlertify()) alertify.alert('', '<p class="ebl-error">' + eblLang.general_fatalError + '</p><pre class="ebl-pre">' + text + '</pre>'); 
         else alert(text);
     }
 }
@@ -2041,56 +2042,56 @@ function buildEditorToolbar() {
     
     var undo = createButton('ebl-action-editor-undo', l18n_("Undo"));
     addClass(undo, 'ebl-icon-rotate-left');
-    setDataAttribute(undo, 'wysihtml5Command', 'undo');
+    setDataAttribute(undo, 'wysihtmlCommand', 'undo');
     
     var textBold = createButton('ebl-action-editor-bold', l18n_("Bold"));
     addClass(textBold, 'ebl-icon-bold');
-    setDataAttribute(textBold, 'wysihtml5Command', 'bold');
+    setDataAttribute(textBold, 'wysihtmlCommand', 'bold');
     
     var textItalic = createButton('ebl-action-editor-italic', l18n_("Italic"));
     addClass(textItalic, 'ebl-icon-italic');
-    setDataAttribute(textItalic, 'wysihtml5Command', 'italic');
+    setDataAttribute(textItalic, 'wysihtmlCommand', 'italic');
     
     var textUnderline = createButton('ebl-action-editor-underline', l18n_("Underline"));
     addClass(textUnderline, 'ebl-icon-underline');
-    setDataAttribute(textUnderline, 'wysihtml5Command', 'underline');
+    setDataAttribute(textUnderline, 'wysihtmlCommand', 'underline');
     
     var textH1 = createButton('ebl-action-editor-h1', l18n_("H1"));
     addClass(textH1, 'ebl-icon-header');
-    setDataAttribute(textH1, 'wysihtml5Command', 'formatBlock');
-    setDataAttribute(textH1, 'wysihtml5CommandValue', 'h1');
+    setDataAttribute(textH1, 'wysihtmlCommand', 'formatBlock');
+    setDataAttribute(textH1, 'wysihtmlCommandValue', 'h1');
     
     var alignLeft = createButton('ebl-action-editor-alignleft', l18n_("Align left"));
     addClass(alignLeft, 'ebl-icon-align-left');
-    setDataAttribute(alignLeft, 'wysihtml5Command', 'justifyLeft');
+    setDataAttribute(alignLeft, 'wysihtmlCommand', 'justifyLeft');
     
     var alignCenter = createButton('ebl-action-editor-aligncenter', l18n_("Align center"));
     addClass(alignCenter, 'ebl-icon-align-center');
-    setDataAttribute(alignCenter, 'wysihtml5Command', 'justifyCenter');
+    setDataAttribute(alignCenter, 'wysihtmlCommand', 'justifyCenter');
     
     var alignRight = createButton('ebl-action-editor-alignright', l18n_("Align right"));
     addClass(alignRight, 'ebl-icon-align-right');
-    setDataAttribute(alignRight, 'wysihtml5Command', 'justifyRight');
+    setDataAttribute(alignRight, 'wysihtmlCommand', 'justifyRight');
     
     var addUl = createButton('ebl-action-editor-addul', l18n_("Unordered list"));
     addClass(addUl, 'ebl-icon-list-ul');
-    setDataAttribute(addUl, 'wysihtml5Command', 'insertUnorderedList');
+    setDataAttribute(addUl, 'wysihtmlCommand', 'insertUnorderedList');
     
     var addOl = createButton('ebl-action-editor-addol', l18n_("Ordered list"));
     addClass(addOl, 'ebl-icon-list-ol');
-    setDataAttribute(addOl, 'wysihtml5Command', 'insertOrderedList');
+    setDataAttribute(addOl, 'wysihtmlCommand', 'insertOrderedList');
     
     var addImage = createButton('ebl-action-editor-addimage', l18n_("Add image"));
     addClass(addImage, 'ebl-icon-image');
-    setDataAttribute(addImage, 'wysihtml5Command', 'insertImage');
+    setDataAttribute(addImage, 'wysihtmlCommand', 'insertImage');
     
     var addLink = createButton('ebl-action-editor-addlink', l18n_("Add link"));
     addClass(addLink, 'ebl-icon-chain');
-    setDataAttribute(addLink, 'wysihtml5Command', 'createLink');
+    setDataAttribute(addLink, 'wysihtmlCommand', 'createLink');
     
     var showHtml = createButton('ebl-action-editor-html', l18n_("Edit HTML"));
     addClass(showHtml, 'ebl-icon-file-code');
-    setDataAttribute(showHtml, 'wysihtml5Action', 'change_view');
+    setDataAttribute(showHtml, 'wysihtmlAction', 'change_view');
     
     format.appendChild(undo);
     format.appendChild(separator.cloneNode(true));
@@ -2117,34 +2118,34 @@ function buildEditorToolbar() {
     format.appendChild(showHtml);
     
     var image = document.createElement('div');
-    setDataAttribute(image, 'wysihtml5Dialog', 'insertImage');
+    setDataAttribute(image, 'wysihtmlDialog', 'insertImage');
     addClass(image, 'ebl-editor-toolbar-sub', 'toolbar-sub-2');
     
     var imageSrc = document.createElement('input');
-    setDataAttribute(imageSrc, 'wysihtml5DialogField', 'src');
+    setDataAttribute(imageSrc, 'wysihtmlDialogField', 'src');
     imageSrc.type = 'text';
     imageSrc.value = 'http://';
     
     var imageSrcSave = createButton('ebl-action-editor-image-save', l18n_("Add image"));
     imageSrcSave.innerHTML = l18n_("Add image");
-    setDataAttribute(imageSrcSave, 'wysihtml5DialogAction', 'save');
+    setDataAttribute(imageSrcSave, 'wysihtmlDialogAction', 'save');
     
     image.appendChild(imageSrc);
     image.appendChild(imageSrcSave);
     hideElement(image);
     
     var link = document.createElement('div');
-    setDataAttribute(link, 'wysihtml5Dialog', 'createLink');
+    setDataAttribute(link, 'wysihtmlDialog', 'createLink');
     addClass(link, 'ebl-editor-toolbar-sub', 'toolbar-sub-2');
     
     var linkUrl = document.createElement('input');
-    setDataAttribute(linkUrl, 'wysihtml5DialogField', 'href');
+    setDataAttribute(linkUrl, 'wysihtmlDialogField', 'href');
     linkUrl.type = 'text';
     linkUrl.value = 'http://';
     
     var linkUrlSave = createButton('ebl-action-editor-link-save', l18n_("Add link"));
     linkUrlSave.innerHTML = l18n_("Add link");
-    setDataAttribute(linkUrlSave, 'wysihtml5DialogAction', 'save');
+    setDataAttribute(linkUrlSave, 'wysihtmlDialogAction', 'save');
     
     link.appendChild(linkUrl);
     link.appendChild(linkUrlSave);

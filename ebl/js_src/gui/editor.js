@@ -6,7 +6,7 @@ function switchToEditorMode () {
         return;
     }
     
-    if (typeof wysihtml5 === 'undefined') {
+    if (typeof wysihtml === 'undefined') {
         
         if (editorDepLoad >= 1) {
             logError('error loading editor library.');
@@ -16,12 +16,12 @@ function switchToEditorMode () {
         
         logDebug('editor library not yet loaded. perform loading now...');
         var dependencies = [];
-        dependencies.push({url: scriptPath + '/libs/wysihtml/wysihtml-toolbar.min.js', type: 'js'});
+        dependencies.push({url: scriptPath + '/libs/wysihtml/wysihtml.min.js', type: 'js'});
+        dependencies.push({url: scriptPath + '/libs/wysihtml/wysihtml.toolbar.min.js', type: 'js'});
+        dependencies.push({url: scriptPath + '/libs/wysihtml/wysihtml.table_editing.min.js', type: 'js'});
+        dependencies.push({url: scriptPath + '/libs/wysihtml/parser_rules/advanced_and_extended.js', type: 'js'});
         
-        includeDependencies(dependencies, function() {
-            dependencies = [];
-            dependencies.push({url: scriptPath + '/libs/wysihtml/parser_rules/advanced_and_extended.js', type: 'js'});
-            includeDependencies(dependencies, function() { switchToEditorMode(); }); });
+        includeDependencies(dependencies, function() { switchToEditorMode(); });
         
         return;
     }
@@ -59,11 +59,11 @@ function initEditors() {
     var editorToolbar = gState.container.querySelector('.ebl-editor-toolbar');
     if (isNullOrUndef(editorToolbar)) editorToolbar = buildEditorToolbar();
     
-    editorInstances.content = new wysihtml5.Editor(contentElem, {
+    editorInstances.content = new wysihtml.Editor(contentElem, {
         name: 'ebl-editor-body',
         style: false,
         showToolbarAfterInit: false,
-        parserRules: wysihtml5ParserRules,
+        parserRules: wysihtmlParserRules,
         uneditableContainerClassname: false,
         useLineBreaks: false,
         toolbar: editorToolbar

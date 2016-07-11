@@ -10,7 +10,7 @@
  *
  */
  
-/*global alertify, wysihtml5, wysihtml5ParserRules, ActiveXObject*/
+/*global alertify, wysihtml, wysihtmlParserRules, ActiveXObject*/
  
 var Ebl = window.Ebl = {};
     Ebl.version = '@VERSION';
@@ -57,12 +57,12 @@ function bootUp () {
     
     // load all the dependencies
     var dependencies = [];
-    dependencies.push({url: scriptPath + '/languages/' + gState.config.language + '.js', type: 'js'});
-    dependencies.push({url: scriptPath + '/css/base.css', type: 'css'});
+    if (gState.config.language != 'en') dependencies.push({url: scriptPath + '/languages/' + gState.config.language + '.js', type: 'js', required : false});
+    dependencies.push({url: scriptPath + '/css/base.css', type: 'css', required : true});
     if (!hasAlertify() && !isBadBrowser()) {
-        dependencies.push({url: scriptPath + '/libs/alertify/alertify.min.js', type: 'js'});
-        dependencies.push({url: scriptPath + '/libs/alertify/css/alertify.min.css', type: 'css'});
-        dependencies.push({url: scriptPath + '/libs/alertify/css/themes/default.min.css', type: 'css'});
+        dependencies.push({url: scriptPath + '/libs/alertify/alertify.min.js', type: 'js', required : true});
+        dependencies.push({url: scriptPath + '/libs/alertify/css/alertify.min.css', type: 'css', required : true});
+        dependencies.push({url: scriptPath + '/libs/alertify/css/themes/default.min.css', type: 'css', required : false});
     }
     
     includeDependencies(dependencies, function() {            

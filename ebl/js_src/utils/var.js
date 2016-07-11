@@ -127,11 +127,11 @@ function printDatetimeFromObj(date) {
 }
 
 function l18n_(key) {
-    if (!isNullOrUndef(ebl_l18n) && ebl_l18n.hasOwnProperty(key)) {
-        return ebl_l18n[key];
+    if (typeof ebl_l18n === 'undefined' || !ebl_l18n.hasOwnProperty(key)) {
+        if (gState.config.language != 'en') logWarning("can't find translated text for key '"+ key +"', language '"+ gState.config.language +"'")
+        return key;
     }
     else {
-        logWarning("can't find translated text for key '"+ key +"', language '"+ gState.config.language +"'")
-        return key;
+        return ebl_l18n[key];
     }
 }
