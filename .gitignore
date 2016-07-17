@@ -1,5 +1,5 @@
 ebl/db/*.json
-ebl/js_src/node_modules
+ebl/core/js_src/node_modules
 ebl/templates/_cache
 
 !.gitignore
