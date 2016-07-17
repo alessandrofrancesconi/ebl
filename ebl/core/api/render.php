@@ -12,7 +12,8 @@ require ("../libs/Smarty/Smarty/Smarty.class.php");
 
 class RenderApi extends EblApi {
     
-    const TEMPLATE_CACHE_FOLDER = "_cache";
+    const TEMPLATES_DIR = DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR ."..". DIRECTORY_SEPARATOR ."templates". DIRECTORY_SEPARATOR;
+    const TEMPLATES_CACHE_FOLDER = self::TEMPLATES_DIR ."_cache";
     
     private $smarty = null;
     
@@ -23,7 +24,7 @@ class RenderApi extends EblApi {
         
         $this->smarty = new Smarty();
         $this->smarty->muteExpectedErrors();
-        $this->smarty->setCompileDir($this->workingPath . "/../templates/" . self::TEMPLATE_CACHE_FOLDER);
+        $this->smarty->setCompileDir($this->workingPath . self::TEMPLATES_CACHE_FOLDER);
         
         $eblVar = new stdClass();
         $eblVar->class = new stdClass();
@@ -165,7 +166,7 @@ class RenderApi extends EblApi {
         $eblVars->class->post = "ebl-post ebl-post-preview";
         
         $this->smarty->assign('ebl', $eblVars); 
-        $html = $this->smarty->fetch($this->workingPath."/../templates/". $configVal['template']. "/previews.tpl");
+        $html = $this->smarty->fetch($this->workingPath . self::TEMPLATES_DIR . $configVal['template']. "/previews.tpl");
         
         return "<ebl-template data-ebl-type=\"page\" data-ebl-page-num=\"". $page ."\">". $html ."</ebl-template>";
     }
@@ -184,7 +185,7 @@ class RenderApi extends EblApi {
         $eblVars->singlePost = $post;
         
         $this->smarty->assign('ebl', $eblVars); 
-        $html = $this->smarty->fetch($this->workingPath."/../templates/". $configVal['template']. "/single.tpl");
+        $html = $this->smarty->fetch($this->workingPath . self::TEMPLATES_DIR . $configVal['template']. "/single.tpl");
         
         return "<ebl-template data-ebl-type=\"post\" data-ebl-post-status=\"new\">". $html ."</ebl-template>";
     }
@@ -224,7 +225,7 @@ class RenderApi extends EblApi {
         }
         
         $this->smarty->assign('ebl', $eblVars); 
-        $html = $this->smarty->fetch($this->workingPath."/../templates/". $configVal['template']. "/single.tpl");
+        $html = $this->smarty->fetch($this->workingPath . self::TEMPLATES_DIR . $configVal['template']. "/single.tpl");
         
         return "<ebl-template data-ebl-type=\"post\" 
             data-ebl-post-status=\"". $post->status ."\" 

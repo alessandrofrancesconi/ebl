@@ -69,7 +69,7 @@ abstract class EblApi {
     protected function initDb() {
         if ($this->repo != null) return; // already initialized
         
-        $db = new \JamesMoss\Flywheel\Config($this->workingPath . "/..");
+        $db = new \JamesMoss\Flywheel\Config($this->workingPath . DIRECTORY_SEPARATOR ."..". DIRECTORY_SEPARATOR ."..");
         try { $this->repo = new \JamesMoss\Flywheel\Repository("db", $db); }
         catch (RuntimeException $e) { throw new DatabaseException("problem accessing the DB: ". $e->getMessage(), self::EBL_ERROR_DB_ACCESS); }
     }

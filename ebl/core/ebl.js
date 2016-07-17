@@ -1110,10 +1110,14 @@ function switchToEditorMode () {
         var dependencies = [];
         dependencies.push({url: scriptPath + '/libs/wysihtml/wysihtml.min.js', type: 'js'});
         dependencies.push({url: scriptPath + '/libs/wysihtml/wysihtml.toolbar.min.js', type: 'js'});
-        dependencies.push({url: scriptPath + '/libs/wysihtml/wysihtml.table_editing.min.js', type: 'js'});
-        dependencies.push({url: scriptPath + '/libs/wysihtml/parser_rules/advanced_and_extended.js', type: 'js'});
         
-        includeDependencies(dependencies, function() { switchToEditorMode(); });
+        // include core wysihtml, then plugins
+        includeDependencies(dependencies, function() {
+            dependencies = [];
+            dependencies.push({url: scriptPath + '/libs/wysihtml/wysihtml.table_editing.min.js', type: 'js'});
+            dependencies.push({url: scriptPath + '/libs/wysihtml/parser_rules/advanced_and_extended.js', type: 'js'});
+            includeDependencies(dependencies, function() { switchToEditorMode(); }); 
+        });
         
         return;
     }
