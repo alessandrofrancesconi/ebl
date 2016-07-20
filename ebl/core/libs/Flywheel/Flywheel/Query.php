@@ -7,15 +7,15 @@ namespace JamesMoss\Flywheel;
  *
  * Builds an executes a query whichs searches and sorts documents from a
  * repository.
+ *
+ * @todo turn the limit and order by arrays into value objects
  */
 class Query
 {
     protected $repo;
-    protected $limit   = false;
-    protected $orderBy = false;
-
-    /** @var QueryWhere */
-    protected $where;
+    protected $predicate;
+    protected $limit   = array();
+    protected $orderBy = array();
 
     /**
      * Constructor
@@ -25,7 +25,7 @@ class Query
     public function __construct(Repository $repository)
     {
         $this->repo = $repository;
-        $this->where = new QueryWhere;
+        $this->predicate = new Predicate();
     }
 
     /**
@@ -37,7 +37,7 @@ class Query
      *
      * @return Query The same instance of this class.
      */
-    public function limit($count, $offset)
+    public function limit($count, $offset = 0)
     {
         $this->limit = array((int) $count, (int) $offset);
 
@@ -61,47 +61,46 @@ class Query
     }
 
     /**
-     * Sets the predicates for this query,
-     *
-     * @param string $field    The name of the field to match.
-     * @param string $operator An operator from the allowed list.
-     * @param string $value    The value to compare against.
+     * @see Query::andWhere
      *
      * @return Query The same instance of this class.
      */
     public function where($field, $operator = null, $value = null)
     {
-        $this->where->whereAnd($field, $operator, $value);
+        return $this->andWhere($field, $operator, $value);
+    }
+
+    /**
+     * Adds a boolean AND predicate for this query,
+     *
+     * @param string|Closure $field    The name of the field to match or an anonymous
+     *                                 function that will define sub predicates.
+     * @param string         $operator An operator from the allowed list.
+     * @param string         $value    The value to compare against.
+     *
+     * @return Query The same instance of this class.
+     */
+    public function andWhere($field, $operator = null, $value = null)
+    {
+        $this->predicate->andWhere($field, $operator, $value);
+
         return $this;
     }
 
     /**
-     * Add the predicates for this query,
+     * Adds a boolean OR predicate for this query,
      *
-     * @param string $field    The name of the field to match.
-     * @param string $operator An operator from the allowed list.
-     * @param string $value    The value to compare against.
+     * @param string|Closure $field    The name of the field to match or an anonymous
+     *                                 function that will define sub predicates.
+     * @param string         $operator An operator from the allowed list.
+     * @param string         $value    The value to compare against.
      *
      * @return Query The same instance of this class.
      */
-    public function whereAnd($field, $operator, $value)
+    public function orWhere($field, $operator = null, $value = null)
     {
-        $this->where($field, $operator, $value);
-        return $this;
-    }
+        $this->predicate->orWhere($field, $operator, $value);
 
-    /**
-     * Add the predicates for this query,
-     *
-     * @param string $field    The name of the field to match.
-     * @param string $operator An operator from the allowed list.
-     * @param string $value    The value to compare against.
-     *
-     * @return Query The same instance of this class.
-     */
-    public function whereOr($field, $operator, $value)
-    {
-        $this->where->whereOr($field, $operator, $value);
         return $this;
     }
 
@@ -112,76 +111,8 @@ class Query
      */
     public function execute()
     {
-        $documents = $this->repo->findAll();
+        $qe = new QueryExecuter($this->repo, $this->predicate, $this->limit, $this->orderBy);
 
-        $documents = array_values(array_filter($documents, array(new QueryFilter($this->where), 'filter')));
-
-        if ($this->orderBy) {
-            $sorts = array();
-            foreach ($this->orderBy as $order) {
-                $parts = explode(' ', $order, 2);
-                // TODO - validate parts
-                $sorts[] = array(
-                    $parts[0],
-                    isset($parts[1]) && $parts[1] == 'DESC' ? SORT_DESC : SORT_ASC
-                );
-            }
-
-            $documents = $this->sort($documents, $sorts);
-        }
-
-        $totalCount = count($documents);
-
-        if ($this->limit) {
-            list($count, $offset) = $this->limit;
-            $documents = array_slice($documents, $offset, $count);
-        }
-
-        return new Result($documents, $totalCount);
-    }
-
-    /**
-     * Sorts an array of documents by multiple fields if needed.
-     *
-     * @param array $array An array of Documents.
-     * @param array $args  The fields to sort by.
-     *
-     * @return array The sorted array of documents.
-     */
-    protected function sort(array $array, array $args)
-    {
-        $c = count($args);
-
-        usort($array, function ($a, $b) use ($args, $c) {
-            $i   = 0;
-            $cmp = 0;
-            while ($cmp == 0 && $i < $c) {
-                $keyName = $args[$i][0];
-                if($keyName == 'id') {
-                    $valueA = $a->getId();
-                    $valueB = $b->getId();
-                } else {
-                    $valueA = isset($a->{$keyName}) ? $a->{$keyName} : null;
-                    $valueB = isset($b->{$keyName}) ? $b->{$keyName} : null; 
-                }
-
-                if (is_string($valueA)) {
-                    $cmp = strcmp($valueA, $valueB);
-                } elseif (is_bool($valueA)) {
-                    $cmp = $valueA - $valueB;
-                } else {
-                    $cmp = ($valueA == $valueB) ? 0 : (($valueA > $valueB) ? -1 : 1);
-                }
-
-                if ($args[$i][1] === SORT_DESC) {
-                    $cmp *= -1;
-                }
-                $i++;
-            }
-
-            return $cmp;
-        });
-
-        return $array;
+        return $qe->run();
     }
 }

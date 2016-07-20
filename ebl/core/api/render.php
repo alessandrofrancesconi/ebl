@@ -194,7 +194,7 @@ class RenderApi extends EblApi {
         $this->initDb();
         
         $query = $this->repo->query()
-            ->where('_id', '===', $postId);
+            ->where('__id', '===', $postId);
         
         $logged = $this->getLoggedState();
         if (!$logged) $query = $query->where('status', '===', "published");

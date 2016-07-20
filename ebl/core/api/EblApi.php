@@ -17,9 +17,9 @@ require ("../libs/Flywheel/Flywheel/Config.php");
 require ("../libs/Flywheel/Flywheel/Repository.php");
 require ("../libs/Flywheel/Flywheel/DocumentInterface.php");
 require ("../libs/Flywheel/Flywheel/Document.php");
+require ("../libs/Flywheel/Flywheel/Predicate.php");
+require ("../libs/Flywheel/Flywheel/QueryExecuter.php");
 require ("../libs/Flywheel/Flywheel/Query.php");
-require ("../libs/Flywheel/Flywheel/QueryWhere.php");
-require ("../libs/Flywheel/Flywheel/QueryFilter.php");
 require ("../libs/Flywheel/Flywheel/CachedQuery.php");
 require ("../libs/Flywheel/Flywheel/Result.php");
 

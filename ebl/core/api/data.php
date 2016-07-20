@@ -203,7 +203,7 @@ class DataApi extends EblApi {
         $this->initDb();
         
         $query = $this->repo->query()
-            ->where('_id', '===', $postId);
+            ->where('__id', '===', $postId);
         
         $logged = $this->getLoggedState();
         if (!$logged) $query = $query->where('status', '===', "published");
@@ -261,7 +261,7 @@ class DataApi extends EblApi {
         
         // check if another doc with the same id already exists
         $sameId = $this->repo->query()
-            ->where('_id', '===', $id)
+            ->where('__id', '===', $id)
             ->where('updatedAt', '!=', $doc->updatedAt) // exclude this very same doc
             ->execute();
         
@@ -301,7 +301,7 @@ class DataApi extends EblApi {
         
         $now = date(self::DATE_FORMAT_ISO8601, time());
         $res = $this->repo->query()
-            ->where('_id', '===', $postId)
+            ->where('__id', '===', $postId)
             ->execute();
         
         if ($res->count() == 0) {
